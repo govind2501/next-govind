@@ -1,0 +1,53 @@
+{
+  "Uttar Pradesh": [
+    "Lucknow", "Kanpur Nagar", "Varanasi", "Prayagraj", "Ghaziabad",
+    "Agra", "Meerut", "Noida (Gautam Buddh Nagar)", "Gorakhpur", "Bareilly",
+    "Aligarh", "Moradabad", "Saharanpur", "Jhansi", "Ayodhya (Faizabad)",
+    "Firozabad", "Mathura", "Muzaffarnagar", "Rampur", "Shahjahanpur"
+  ],
+  "Maharashtra": [
+    "Mumbai City", "Mumbai Suburban", "Pune", "Nagpur", "Nashik",
+    "Thane", "Aurangabad (Chhatrapati Sambhajinagar)", "Solapur", "Kolhapur",
+    "Amravati", "Nanded", "Sangli", "Satara", "Jalgaon", "Akola"
+  ],
+  "Bihar": [
+    "Patna", "Gaya", "Bhagalpur", "Muzaffarpur", "Darbhanga",
+    "Purnia", "Munger", "Chapra (Saran)", "Begusarai", "Katihar",
+    "Nalanda", "Rohtas", "Samastipur", "Vaishali", "West Champaran"
+  ],
+  "Rajasthan": [
+    "Jaipur", "Jodhpur", "Udaipur", "Kota", "Bikaner",
+    "Ajmer", "Bhilwara", "Alwar", "Sikar", "Bharatpur",
+    "Pali", "Sri Ganganagar", "Nagaur", "Tonk", "Barmer"
+  ],
+  "Madhya Pradesh": [
+    "Bhopal", "Indore", "Jabalpur", "Gwalior", "Ujjain",
+    "Sagar", "Rewa", "Satna", "Ratlam", "Dewas",
+    "Chhindwara", "Vidisha", "Khandwa", "Sehore", "Damoh"
+  ],
+  "Delhi": [
+    "New Delhi", "North Delhi", "North East Delhi", "North West Delhi",
+    "East Delhi", "South Delhi", "South East Delhi", "South West Delhi",
+    "West Delhi", "Central Delhi", "Shahdara"
+  ],
+  "Haryana": [
+    "Gurugram", "Faridabad", "Panipat", "Ambala", "Karnal",
+    "Hisar", "Rohtak", "Sonipat", "Yamunanagar", "Panchkula",
+    "Sirsa", "Bhiwani", "Rewari", "Kurukshetra", "Jhajjar"
+  ],
+  "Punjab": [
+    "Ludhiana", "Amritsar", "Jalandhar", "Patiala", "Bathinda",
+    "Mohali (SAS Nagar)", "Hoshiarpur", "Moga", "Firozpur", "Kapurthala",
+    "Sangrur", "Faridkot", "Pathankot", "Rupnagar", "Gurdaspur"
+  ],
+  "Gujarat": [
+    "Ahmedabad", "Surat", "Vadodara", "Rajkot", "Bhavnagar",
+    "Jamnagar", "Gandhinagar", "Junagadh", "Anand", "Mehsana",
+    "Kutch (Bhuj)", "Navsari", "Bharuch", "Porbandar", "Amreli"
+  ],
+  "West Bengal": [
+    "Kolkata", "Howrah", "North 24 Parganas", "South 24 Parganas", "Hooghly",
+    "Nadia", "Purba Bardhaman", "Paschim Bardhaman", "Malda", "Murshidabad",
+    "Darjeeling", "Jalpaiguri", "Purulia", "Bankura", "Birbhum"
+  ]
+}
