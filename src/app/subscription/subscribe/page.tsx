@@ -17,8 +17,8 @@ function SubscribeForm() {
   const router = useRouter();
   const searchParams = useSearchParams();
 
-  // Agar Property Detail page se "state" aur "district" URL me aaye hain,
-  // to unhe pehle se select kar denge
+  // If "state" and "district" arrived in the URL from the Property Detail page,
+  // pre-select them
   const initialState = searchParams.get("state") || "";
   const initialDistrict = searchParams.get("district") || "";
 
@@ -30,7 +30,7 @@ function SubscribeForm() {
 
   const allStates = Object.keys(statesDistricts);
 
-  // State change hone par district list update karna
+  // Update the district list whenever the state changes
   useEffect(() => {
     if (state && (statesDistricts as any)[state]) {
       setDistrictList((statesDistricts as any)[state]);
@@ -41,25 +41,25 @@ function SubscribeForm() {
 
   const handleFakePayment = async () => {
     if (!state || !district) {
-      toast.error("Please State aur District dono select karein");
+      toast.error("Please select both State and District");
       return;
     }
 
     try {
       setLoading(true);
 
-      // Yahan asli Razorpay/Payment Gateway aayega aage jaake.
-      // Abhi ke liye seedha "subscribe" API call kar rahe hain, jaise payment ho chuka ho.
+      // A real Razorpay/Payment Gateway will go here in the future.
+      // For now, calling the "subscribe" API directly, as if payment succeeded.
       const response = await axios.post("/api/subscription/subscribe", {
         state,
         district,
         planType,
       });
 
-      toast.success(response.data.message || "Subscription activate ho gayi!");
+      toast.success(response.data.message || "Subscription activated!");
       router.push("/property");
     } catch (error: any) {
-      toast.error(error.response?.data?.error || "Subscription nahi ho payi");
+      toast.error(error.response?.data?.error || "Subscription failed");
     } finally {
       setLoading(false);
     }
@@ -73,9 +73,9 @@ function SubscribeForm() {
           Unlock District Details
         </h1>
         <p className='text-gray-600 text-center mb-6 text-sm'>
-          Subscription lekar us district ki sabhi properties ke owner ka
-          contact number aur poora address dekh sakte hain. Isi district me
-          property/requirement add bhi kar sakte hain.
+          Subscribe to view the owner's contact number and full address for
+          all properties in that district. You can also add a
+          property/requirement in the same district.
         </p>
 
         {/* State Selection */}
@@ -103,7 +103,7 @@ function SubscribeForm() {
             disabled={!state}
           >
             <option value="">
-              {state ? "Select District" : "Pehle State chunein"}
+              {state ? "Select District" : "Select State First"}
             </option>
             {districtList.map((dist) => (
               <option key={dist} value={dist}>{dist}</option>
@@ -166,14 +166,14 @@ function SubscribeForm() {
         </button>
 
         <p className='text-xs text-gray-500 text-center mt-3'>
-          ⚠️ Ye ek demo payment hai, abhi koi asli paisa nahi katega.
+          ⚠️ This is a demo payment, no real money will be charged.
         </p>
       </div>
     </div>
   );
 }
 
-// Suspense wrapper zaroori hai kyunki useSearchParams client-side hook hai
+// Suspense wrapper is required because useSearchParams is a client-side hook
 export default function SubscribePage() {
   return (
     <Suspense fallback={<p className='text-center mt-10'>Loading...</p>}>

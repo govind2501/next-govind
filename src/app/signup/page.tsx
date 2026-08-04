@@ -16,6 +16,8 @@ export default function SignupPage() {
   const [showPassword, setShowPassword] = useState(false);
   const [buttonDisabled, setButtonDisabled] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [agreedToTerms, setAgreedToTerms] = useState(false);
+
 
   // Username check ke liye naye states
   const [usernameStatus, setUsernameStatus] = useState<"idle" | "checking" | "available" | "taken">("idle");
@@ -44,13 +46,14 @@ export default function SignupPage() {
       user.username.length > 2 &&
       user.email.length > 5 &&
       user.password.length > 5 &&
-      usernameStatus === "available"
+      usernameStatus === "available" &&
+      agreedToTerms
     ) {
       setButtonDisabled(false);
     } else {
       setButtonDisabled(true);
     }
-  }, [user, usernameStatus])
+  }, [user, usernameStatus, agreedToTerms])
 
     
   useEffect(() => {
@@ -130,6 +133,28 @@ export default function SignupPage() {
     </button>
   </div>
 </div>
+
+          <div className='flex items-start gap-2 w-full mb-4'>
+            <input
+              type="checkbox"
+              id="agreeTerms"
+              checked={agreedToTerms}
+              onChange={(e) => setAgreedToTerms(e.target.checked)}
+              className='mt-1'
+            />
+            <label htmlFor="agreeTerms" className='text-sm'>
+              I agree to the{" "}
+              <Link
+                href="/terms"
+                target="_blank"
+                className='text-orange-700 underline font-semibold'
+              >
+                Terms & Conditions
+              </Link>
+              , including that I must independently verify any property before transacting,
+              and that subscription payments are non-refundable.
+            </label>
+          </div>
 
           <button
             type="submit"

@@ -2,11 +2,10 @@ import { connect } from "@/dbConfig/dbConfig";
 import Property from "@/models/propertymodels";
 import { NextRequest, NextResponse } from "next/server";
 
-connect();
-
 export async function GET(request: NextRequest) {
   try {
-    // URL se query parameters nikalna, jaise: /api/property/all?state=Uttar Pradesh&district=Lucknow
+    await connect();
+    // Get query parameters from the URL, e.g.: /api/property/all?state=Uttar Pradesh&district=Lucknow
     const { searchParams } = new URL(request.url);
 
     const state = searchParams.get("state");
@@ -15,12 +14,12 @@ export async function GET(request: NextRequest) {
     const transactionType = searchParams.get("transactionType"); // Sell / Rent
     const listingType = searchParams.get("listingType");       // Sell / BuyerRequirement
 
-    // Page-wise data laane ke liye (pagination) - default page 1, 10 items
+    // For fetching page-wise data (pagination) - default page 1, 10 items
     const page = parseInt(searchParams.get("page") || "1");
     const limit = parseInt(searchParams.get("limit") || "10");
     const skip = (page - 1) * limit;
 
-    // Filter object banate hain - sirf wahi cheezein add karte hain jo user ne bheji hain
+    // Build the filter object - only add the fields the user actually sent
     const filter: any = { status: "Approved" };
 
     if (state) filter.state = state;
@@ -29,10 +28,10 @@ export async function GET(request: NextRequest) {
     if (transactionType) filter.transactionType = transactionType;
     if (listingType) filter.listingType = listingType;
 
-    // Total count nikalna (pagination ke liye zaroori)
+    // Get the total count (needed for pagination)
     const totalProperties = await Property.countDocuments(filter);
 
-    // Properties fetch karna - naye listing sabse upar (newest first)
+    // Fetch the properties - newest listings first
     const properties = await Property.find(filter)
       .sort({ createdAt: -1 })
       .skip(skip)

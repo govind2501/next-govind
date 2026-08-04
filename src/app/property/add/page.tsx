@@ -34,21 +34,21 @@ export default function AddPropertyPage() {
 
   const [imageError, setImageError] = useState("");
 
-  // Districts state - selected state ke hisaab se update hoga
+  // District list state - updates based on the selected state
   const [districtList, setDistrictList] = useState<string[]>([]);
 
   const allStates = Object.keys(statesDistricts);
 
   const isBuyerRequirement = property.listingType === "BuyerRequirement";
 
-  // Jab bhi state change ho, uske districts load karo
+  // Whenever the state changes, load its districts
   useEffect(() => {
     if (property.state && (statesDistricts as any)[property.state]) {
       setDistrictList((statesDistricts as any)[property.state]);
     } else {
       setDistrictList([]);
     }
-    // State change hote hi purana district reset kar do
+    // Reset the previously selected district when state changes
     setProperty((prev) => ({ ...prev, district: "" }));
   }, [property.state]);
 
@@ -63,7 +63,7 @@ export default function AddPropertyPage() {
     setImageError("");
 
     if (property.images.length >= MAX_IMAGES) {
-      setImageError(`Zyada se zyada ${MAX_IMAGES} photos hi upload kar sakte hain`);
+      setImageError(`You can upload a maximum of ${MAX_IMAGES} photos`);
       return;
     }
 
@@ -72,13 +72,13 @@ export default function AddPropertyPage() {
 
     if (fileSizeKB > MAX_IMAGE_SIZE_KB) {
       setImageError(
-        `"${file.name}" ka size ${fileSizeKB.toFixed(1)}KB hai. Photo ${MAX_IMAGE_SIZE_KB}KB se chhoti honi chahiye.`
+        `"${file.name}" is ${fileSizeKB.toFixed(1)}KB. Photo must be smaller than ${MAX_IMAGE_SIZE_KB}KB.`
       );
-      e.target.value = ""; // input reset karna
+      e.target.value = ""; // reset the input
       return;
     }
 
-    // File ko base64 me convert karke images array me daalna
+    // Convert the file to base64 and add it to the images array
     const reader = new FileReader();
     reader.onload = () => {
       const base64String = reader.result as string;
@@ -89,7 +89,7 @@ export default function AddPropertyPage() {
     };
     reader.readAsDataURL(file);
 
-    e.target.value = ""; // taaki same file dobara select ki ja sake
+    e.target.value = ""; // so the same file can be selected again if needed
   };
 
   const removeImage = (index: number) => {
@@ -102,13 +102,13 @@ export default function AddPropertyPage() {
   const onSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
-    // Sell listing ke liye title/description bhi zaroori hain
+    // Title/description are required only for Sell listings
     if (!isBuyerRequirement && (!property.title || !property.description)) {
       toast.error("Please fill title and description");
       return;
     }
 
-    // Ye fields dono listingType me hamesha zaroori hain
+    // These fields are always required for both listing types
     if (!property.propertyType || !property.transactionType || !property.price ||
       !property.state || !property.district || !property.ownerName || !property.contactPhone) {
       toast.error("Please fill all required fields");
@@ -138,9 +138,9 @@ export default function AddPropertyPage() {
           </h1>
           <hr />
 
-          {/* Listing Type Toggle - Sell ya Buyer Requirement */}
+          {/* Listing Type Toggle - Sell or Buyer Requirement */}
           <div>
-            <label className='block mb-1'>Aap kya karna chahte hain?</label>
+            <label className='block mb-1'>What would you like to do?</label>
             <div className='flex gap-4'>
               <button
                 type="button"
@@ -150,7 +150,7 @@ export default function AddPropertyPage() {
                     : "bg-white text-gray-700 border-gray-400"
                   }`}
               >
-                Property Bechna Hai (Sell)
+                Sell Property
               </button>
               <button
                 type="button"
@@ -160,12 +160,12 @@ export default function AddPropertyPage() {
                     : "bg-white text-gray-700 border-gray-400"
                   }`}
               >
-                Mujhe Property Chahiye (Buyer)
+                I Want to Buy Property
               </button>
             </div>
           </div>
 
-          {/* Title & Description - sirf Sell listing ke liye */}
+          {/* Title & Description - only for Sell listings */}
           {!isBuyerRequirement && (
             <>
               <div>
@@ -185,7 +185,7 @@ export default function AddPropertyPage() {
                 <textarea
                   id="description"
                   className='w-full p-2 border border-gray-500 rounded-md text-black focus:outline-none focus:ring-2 focus:ring-blue-700'
-                  placeholder='Property ke baare me detail likhein'
+                  placeholder='Enter details about the property'
                   rows={3}
                   value={property.description}
                   onChange={(e) => setProperty({ ...property, description: e.target.value })}
@@ -194,14 +194,14 @@ export default function AddPropertyPage() {
             </>
           )}
 
-          {/* Message - sirf Buyer Requirement ke liye */}
+          {/* Message - only for Buyer Requirement */}
           {isBuyerRequirement && (
             <div>
-              <label className='block mb-1' htmlFor="description">Aapka Message</label>
+              <label className='block mb-1' htmlFor="description">Your Message</label>
               <textarea
                 id="description"
                 className='w-full p-2 border border-gray-500 rounded-md text-black focus:outline-none focus:ring-2 focus:ring-blue-700'
-                placeholder='e.g. Mujhe Lucknow ke Gomti Nagar area me 2BHK flat chahiye, budget 25 lakh tak'
+                placeholder='e.g. I need a 2BHK flat in Gomti Nagar, Lucknow, budget up to 25 lakh'
                 rows={3}
                 value={property.description}
                 onChange={(e) => setProperty({ ...property, description: e.target.value })}
@@ -220,9 +220,9 @@ export default function AddPropertyPage() {
                 onChange={(e) => setProperty({ ...property, propertyType: e.target.value })}
               >
                 <option value="">Select Type</option>
-                <option value="Land">Jamin (Land)</option>
-                <option value="House">Makan (House)</option>
-                <option value="Shop">Dukan (Shop)</option>
+                <option value="Land">Land</option>
+                <option value="House">House</option>
+                <option value="Shop">Shop</option>
               </select>
             </div>
 
@@ -236,9 +236,9 @@ export default function AddPropertyPage() {
               >
                 <option value="">Select</option>
                 <option value="Sell">
-                  {isBuyerRequirement ? "Khareedna (Buy)" : "Bikri (Sell)"}
+                  {isBuyerRequirement ? "Buy" : "Sell"}
                 </option>
-                <option value="Rent">Kiraya (Rent)</option>
+                <option value="Rent">Rent</option>
               </select>
             </div>
           </div>
@@ -294,7 +294,7 @@ export default function AddPropertyPage() {
 
             <div className='flex-1'>
               <label className='block mb-1' htmlFor="district">
-                {isBuyerRequirement ? "Property lene ki District" : "District"}
+                {isBuyerRequirement ? "District You Want Property In" : "District"}
               </label>
               <select
                 id="district"
@@ -304,7 +304,7 @@ export default function AddPropertyPage() {
                 disabled={!property.state}
               >
                 <option value="">
-                  {property.state ? "Select District" : "Pehle State chunein"}
+                  {property.state ? "Select District" : "Select State First"}
                 </option>
                 {districtList.map((dist) => (
                   <option key={dist} value={dist}>{dist}</option>
@@ -313,7 +313,7 @@ export default function AddPropertyPage() {
             </div>
           </div>
 
-          {/* Ye saare fields sirf Sell listing ke liye dikhenge */}
+          {/* These fields only show for Sell listings */}
           {!isBuyerRequirement && (
             <>
               {/* City & Pincode */}
@@ -349,7 +349,7 @@ export default function AddPropertyPage() {
                   id="address"
                   type="text"
                   className='w-full p-2 border border-gray-500 rounded-md text-black'
-                  placeholder='Poora pata likhein'
+                  placeholder='Enter full address'
                   value={property.address}
                   onChange={(e) => setProperty({ ...property, address: e.target.value })}
                 />
@@ -390,9 +390,9 @@ export default function AddPropertyPage() {
               </div>
             </>
           )}
-          {/* Owner Name, Email, Phone - dono listingType me kaam ki hai */}
+          {/* Owner Name, Email, Phone - needed for both listing types */}
           <div>
-            <label className='block mb-1' htmlFor="ownerName">Aapka Naam</label>
+            <label className='block mb-1' htmlFor="ownerName">Your Name</label>
             <input
               id="ownerName"
               type="text"
@@ -428,10 +428,10 @@ export default function AddPropertyPage() {
             </div>
           </div>
 
-          {/* Image Upload - max 5 photos, each under 5KB */}
+          {/* Image Upload */}
           <div>
             <label className='block mb-1'>
-              Photos (max {MAX_IMAGES}, har photo {MAX_IMAGE_SIZE_KB}KB se chhoti)
+              Photos (max {MAX_IMAGES}, each photo under {MAX_IMAGE_SIZE_KB}KB)
             </label>
             <input
               type="file"
@@ -475,7 +475,7 @@ export default function AddPropertyPage() {
             {loading ? "Submitting..." : isBuyerRequirement ? "Submit Requirement" : "Submit Property"}
           </button>
 
-          {/* Subscribe button - agar customer ke pass is district ki subscription nahi hai */}
+          {/* Subscribe button - in case the customer doesn't have a subscription for this district */}
           <button
             type="button"
             onClick={() =>
@@ -485,7 +485,7 @@ export default function AddPropertyPage() {
             }
             className='w-full text-base bg-white border-2 border-orange-600 text-orange-900 font-bold py-2 rounded-md hover:bg-orange-50 transition'
           >
-            🔓 Subscribe karein is District ke liye
+            🔓 Subscribe for this District
           </button>
 
         </form>

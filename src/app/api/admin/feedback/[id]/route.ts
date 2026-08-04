@@ -1,13 +1,17 @@
 import { connect } from "@/dbConfig/dbConfig";
+import Feedback from "@/models/feedbackmodels";
 import User from "@/models/userModels";
 import { getDataFromToken } from "@/helpers/getDataFromToken";
 import { NextRequest, NextResponse } from "next/server";
 
-export async function GET(request: NextRequest) {
+export async function DELETE(
+  request: NextRequest,
+  { params }: { params: Promise<{ id: string }> }
+) {
   try {
     await connect();
 
-    // Check whether the requester is themself an admin
+    // Only an Admin can delete feedback
     const requesterId = await getDataFromToken(request);
     const requester = await User.findById(requesterId);
 
@@ -18,18 +22,24 @@ export async function GET(request: NextRequest) {
       );
     }
 
-    // Get all users, excluding sensitive fields like password and tokens
-    const users = await User.find({ isAdmin: false }).select(
-      "-password -forgotPasswordToken -forgotPasswordTokenExpiry -VerifyToken -VerifyTokenExpiry"
-    );
+    const { id } = await params;
+
+    const deletedFeedback = await Feedback.findByIdAndDelete(id);
+
+    if (!deletedFeedback) {
+      return NextResponse.json(
+        { error: "Feedback not found" },
+        { status: 404 }
+      );
+    }
 
     return NextResponse.json({
       success: true,
-      users,
+      message: "Feedback deleted successfully",
     });
 
   } catch (error: any) {
-    console.log("Fetch users error:", error.message);
+    console.log("Delete feedback error:", error.message);
     return NextResponse.json(
       { error: error.message },
       { status: 500 }

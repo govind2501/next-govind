@@ -8,10 +8,10 @@ connect();
 
 export async function POST(request: NextRequest) {
   try {
-    // Step 1: Logged-in user ki ID nikalna
+    // Step 1: Get the logged-in user's ID
     const userId = await getDataFromToken(request);
 
-    // Step 2: Check karna ki ye user Admin hai ya nahi
+    // Step 2: Check whether this user is an Admin
     const currentUser = await User.findById(userId).select("isAdmin");
 
     if (!currentUser || !currentUser.isAdmin) {
@@ -21,43 +21,43 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // Step 3: Request body se data lena
+    // Step 3: Get data from the request body
     const reqBody = await request.json();
     const { propertyId, action, rejectionReason } = reqBody;
-    // action = "approve" ya "reject"
+    // action = "approve" or "reject"
 
     if (!propertyId || !action) {
       return NextResponse.json(
-        { error: "Property ID and action dono zaroori hain" },
+        { error: "Property ID and action are both required" },
         { status: 400 }
       );
     }
 
     if (action !== "approve" && action !== "reject") {
       return NextResponse.json(
-        { error: "Action sirf 'approve' ya 'reject' ho sakta hai" },
+        { error: "Action can only be 'approve' or 'reject'" },
         { status: 400 }
       );
     }
 
-    // Step 4: Update karne ke liye fields taiyar karna
+    // Step 4: Prepare the fields to update
     const updateFields =
       action === "approve"
         ? { status: "Approved", rejectionReason: "" }
         : {
             status: "Rejected",
-            rejectionReason: rejectionReason || "Admin ne is listing ko reject kiya hai",
+            rejectionReason: rejectionReason || "Admin has rejected this listing",
           };
 
-    // Step 5: findByIdAndUpdate - sirf status/rejectionReason update hoga,
-    // poore document ki dobara validation nahi chalegi (purani properties safe rahengi)
+    // Step 5: findByIdAndUpdate - only status/rejectionReason will be updated,
+    // full-document validation won't run again (old properties stay safe)
     const property = await Property.findByIdAndUpdate(propertyId, updateFields, {
-      new: true, // updated document wapas milega
+      new: true, // return the updated document
     });
 
     if (!property) {
       return NextResponse.json(
-        { error: "Property nahi mili" },
+        { error: "Property not found" },
         { status: 404 }
       );
     }

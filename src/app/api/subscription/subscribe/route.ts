@@ -23,7 +23,7 @@ export async function POST(request: NextRequest) {
 
     if (!state || !district || !planType) {
       return NextResponse.json(
-        { error: "State, District aur Plan Type teeno zaroori hain" },
+        { error: "State, District and Plan Type are all required" },
         { status: 400 }
       );
     }
@@ -32,13 +32,13 @@ export async function POST(request: NextRequest) {
 
     if (!config) {
       return NextResponse.json(
-        { error: "Plan Type sirf 'Monthly', 'Quarterly' ya 'Yearly' ho sakta hai" },
+        { error: "Plan Type can only be 'Monthly', 'Quarterly' or 'Yearly'" },
         { status: 400 }
       );
     }
 
-    // Step 3: FAKE PAYMENT - abhi ke liye seedha success maan rahe hain
-    // (Aage jaake yahan Razorpay/PhonePe ka real payment verification aayega)
+    // Step 3: FAKE PAYMENT - treating it as an immediate success for now
+    // (Real Razorpay/PhonePe payment verification will go here later)
     const amount = config.amount;
 
     // Step 4: Calculate subscription end date
@@ -65,7 +65,7 @@ export async function POST(request: NextRequest) {
 
     return NextResponse.json({
       success: true,
-      message: `${district} district ke liye ${planType} subscription activate ho gayi!`,
+      message: `${planType} subscription activated for ${district} district!`,
       subscription: newSubscription,
     });
 

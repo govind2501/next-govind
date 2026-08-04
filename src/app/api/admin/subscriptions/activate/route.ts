@@ -7,14 +7,14 @@ import { NextRequest, NextResponse } from "next/server";
 connect();
 
 const PLAN_CONFIG = {
-  Monthly: { amount: 299, months: 1, propertyLimit: 5 },
-  Quarterly: { amount: 599, months: 3, propertyLimit: 15 },
-  Yearly: { amount: 2200, months: 12, propertyLimit: 60 },
+  Monthly: { amount: 299, months: 1, propertyLimit: 20 },
+  Quarterly: { amount: 599, months: 3, propertyLimit: 80 },
+  Yearly: { amount: 2200, months: 12, propertyLimit: 260 },
 };
 
 export async function POST(request: NextRequest) {
   try {
-    // Sirf Admin hi ye action kar sake
+    // Only an Admin can perform this action
     const requesterId = await getDataFromToken(request);
     const requester = await User.findById(requesterId);
 
@@ -30,7 +30,7 @@ export async function POST(request: NextRequest) {
 
     if (!userId || !state || !district || !planType) {
       return NextResponse.json(
-        { error: "User, State, District aur Plan Type sabhi zaroori hain" },
+        { error: "User, State, District and Plan Type are all required" },
         { status: 400 }
       );
     }
@@ -39,7 +39,7 @@ export async function POST(request: NextRequest) {
 
     if (!config) {
       return NextResponse.json(
-        { error: "Plan Type sirf 'Monthly', 'Quarterly' ya 'Yearly' ho sakta hai" },
+        { error: "Plan Type can only be 'Monthly', 'Quarterly' or 'Yearly'" },
         { status: 400 }
       );
     }
@@ -48,7 +48,7 @@ export async function POST(request: NextRequest) {
 
     if (!targetUser) {
       return NextResponse.json(
-        { error: "User nahi mila" },
+        { error: "User not found" },
         { status: 404 }
       );
     }
@@ -75,7 +75,7 @@ export async function POST(request: NextRequest) {
 
     return NextResponse.json({
       success: true,
-      message: `${targetUser.username} ke liye ${district} district ki ${planType} subscription activate ho gayi`,
+      message: `${planType} subscription activated for ${targetUser.username} in ${district} district`,
       subscription: newSubscription,
     });
 
@@ -86,4 +86,4 @@ export async function POST(request: NextRequest) {
       { status: 500 }
     );
   }
-}
+}    

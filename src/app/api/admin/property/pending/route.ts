@@ -8,12 +8,12 @@ connect();
 
 export async function GET(request: NextRequest) {
   try {
-    // Step 1: Logged-in user ki ID nikalna
+    // Step 1: Get the logged-in user's ID
     const userId = await getDataFromToken(request);
 
-    // Step 2: Database se check karna ki ye user Admin hai ya nahi
-    // (Sirf frontend check kaafi nahi hai - kisi bhi user ne agar
-    //  browser me directly URL type kiya, to bhi ye check rok dega)
+    // Step 2: Check in the database whether this user is an Admin
+    // (A frontend-only check isn't enough - if any user directly types
+    //  the URL in the browser, this check will still block them)
     const currentUser = await User.findById(userId).select("isAdmin");
 
     if (!currentUser || !currentUser.isAdmin) {
@@ -23,9 +23,9 @@ export async function GET(request: NextRequest) {
       );
     }
 
-    // Step 3: Sabhi "Pending" properties fetch karna
+    // Step 3: Fetch all "Pending" properties
     const pendingProperties = await Property.find({ status: "Pending" })
-      .sort({ createdAt: -1 }) // sabse purani listing pehle (FIFO order)
+      .sort({ createdAt: -1 }) // oldest listing first (FIFO order)
       .populate("owner", "username email");
 
     return NextResponse.json({

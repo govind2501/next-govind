@@ -9,10 +9,10 @@ export async function POST(request: NextRequest) {
   try {
     await connect();
 
-    // Login user ki ID token se nikalna (jaise aap dashboard me karte hain)
+    // Get the logged-in user's ID from the token
     const userId = await getDataFromToken(request);
 
-    // Logged-in user ka pura record nikalna
+    // Get the full record of the logged-in user
     const user = await User.findById(userId);
 
     if (!user) {
@@ -45,7 +45,7 @@ export async function POST(request: NextRequest) {
       contactPhone,
     } = reqBody;
 
-    // Basic validation - fields jo hamesha zaroori hain (Sell aur BuyerRequirement dono me)
+    // Basic validation - fields that are always required (for both Sell and BuyerRequirement)
     if (!propertyType || !transactionType || !price || !state || !district || !ownerName || !contactPhone) {
       return NextResponse.json(
         { error: "Please fill all required fields" },
@@ -53,7 +53,7 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // Extra validation - sirf "Sell" listing ke liye title/description zaroori
+    // Extra validation - title/description are required only for "Sell" listings
     const finalListingType = listingType === "BuyerRequirement" ? "BuyerRequirement" : "Sell";
 
     if (finalListingType === "Sell" && (!title || !description)) {
@@ -63,7 +63,7 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // ---- District-wise Subscription Check (Admin isse bypass karega) ----
+    // ---- District-wise Subscription Check (Admin bypasses this) ----
     let districtSubscription = null;
 
     if (!user.isAdmin) {
@@ -72,13 +72,13 @@ export async function POST(request: NextRequest) {
         state,
         district,
         status: "Active",
-        endDate: { $gte: new Date() }, // abhi tak expire nahi hui ho
+        endDate: { $gte: new Date() }, // not expired yet
       });
 
       if (!districtSubscription) {
         return NextResponse.json(
           {
-            error: `Property add karne ke liye ${district} district ki subscription lena zaroori hai`,
+            error: `A subscription for ${district} district is required to add a property`,
           },
           { status: 403 }
         );
@@ -87,7 +87,7 @@ export async function POST(request: NextRequest) {
       if (districtSubscription.propertiesAddedCount >= districtSubscription.propertyLimit) {
         return NextResponse.json(
           {
-            error: `Aapki ${district} district ki plan limit poori ho chuki hai. Kripya renew karein`,
+            error: `Your plan limit for ${district} district has been reached. Please renew`,
           },
           { status: 403 }
         );
@@ -114,13 +114,13 @@ export async function POST(request: NextRequest) {
       ownerName,
       ownerEmail,
       contactPhone,
-      owner: userId, // logged-in user ki ID
-      status: "Pending", // hamesha pending se start hoga
+      owner: userId, // logged-in user's ID
+      status: "Pending", // always starts as pending
     });
 
     const savedProperty = await newProperty.save();
 
-    // ---- Subscription count badhana (Admin ke liye skip) ----
+    // ---- Increment subscription count (skipped for Admin) ----
     if (!user.isAdmin && districtSubscription) {
       districtSubscription.propertiesAddedCount += 1;
       await districtSubscription.save();

@@ -5,6 +5,8 @@ export const sendEmail = async ({
     email,
     emailType,
     userId,
+    subject,
+    html,
 }: any) => {
 
     try {
@@ -20,14 +22,17 @@ export const sendEmail = async ({
             },
         });
 
+        // If a custom subject/html is passed (e.g. for feedback emails), use that.
+        // Otherwise fall back to the existing VERIFY / Reset Password behavior.
         const mailOptions = {
             from: process.env.MAIL_USER,
             to: email,
             subject:
-                emailType === "VERIFY"
+                subject ||
+                (emailType === "VERIFY"
                     ? "Verify your Email"
-                    : "Reset Password",
-            html: `<h2>Hello</h2>`,
+                    : "Reset Password"),
+            html: html || `<h2>Hello</h2>`,
         };
 
         const mailResponse = await transporter.sendMail(mailOptions);

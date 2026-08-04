@@ -11,7 +11,7 @@ export async function GET(
   { params }: { params: Promise<{ id: string }> }
 ) {
   try {
-    // Next.js 16 me params ek Promise hai, isliye await lagana zaroori hai
+    // In Next.js 16, params is a Promise, so it must be awaited
     const { id } = await params;
 
     const property = await Property.findById(id);
@@ -23,7 +23,7 @@ export async function GET(
       );
     }
 
-    // Public users ko sirf Approved property hi dikhni chahiye
+    // Public users should only see Approved properties
     if (property.status !== "Approved") {
       return NextResponse.json(
         { error: "This property is not available" },
@@ -31,17 +31,17 @@ export async function GET(
       );
     }
 
-    // Step: Check karna ki current user login hai ya nahi
-    // (Login zaroori nahi hai property dekhne ke liye, isliye error ko ignore karte hain)
+    // Step: Check whether the current user is logged in
+    // (Login is not required to view a property, so we ignore the error)
     let userId: string | null = null;
     try {
       userId = await getDataFromToken(request);
     } catch (err) {
-      userId = null; // user login nahi hai - koi baat nahi
+      userId = null; // user is not logged in - that's fine
     }
 
-    // Step: Check karna ki is user ki is property ke state+district ke liye
-    // active subscription hai ya nahi
+    // Step: Check whether this user has an active subscription
+    // for this property's state+district
     let hasAccess = false;
 
     if (userId) {
@@ -50,7 +50,7 @@ export async function GET(
         state: property.state,
         district: property.district,
         status: "Active",
-        endDate: { $gte: new Date() }, // abhi tak expire nahi hui ho
+        endDate: { $gte: new Date() }, // not expired yet
       });
 
       if (activeSubscription) {
@@ -58,10 +58,10 @@ export async function GET(
       }
     }
 
-    // Property ko ek plain object me convert karte hain taaki usme changes kar sakein
+    // Convert the property into a plain object so we can modify it
     const propertyData = property.toObject();
 
-    // Agar subscription nahi hai, to sensitive contact details hata dete hain
+    // If there's no subscription, remove the sensitive contact details
     if (!hasAccess) {
       propertyData.contactPhone = null;
       propertyData.address = null;
@@ -72,7 +72,7 @@ export async function GET(
     return NextResponse.json({
       success: true,
       property: propertyData,
-      hasAccess, // frontend ko batayega ki "Unlock" button dikhana hai ya nahi
+      hasAccess, // tells the frontend whether to show the "Unlock" button
     });
 
   } catch (error: any) {

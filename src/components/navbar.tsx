@@ -16,7 +16,7 @@ export default function Navbar() {
       const response = await axios.get("/api/users/me");
       setUser(response.data.data);
     } catch (error) {
-      setUser(null); // token nahi hai ya invalid hai
+      setUser(null); // no token, or it's invalid
     } finally {
       setLoading(false);
     }
@@ -29,11 +29,11 @@ export default function Navbar() {
   const handleLogout = async () => {
     try {
       await axios.get("/api/users/logout");
-      toast.success("Logout ho gaya");
+      toast.success("Logged out successfully");
       setUser(null);
       router.push("/login");
     } catch (error: any) {
-      toast.error("Logout me error aaya");
+      toast.error("Error while logging out");
     }
   };
 
@@ -43,14 +43,22 @@ export default function Navbar() {
 
         {/* Logo / Home */}
         <Link href="/" className='text-xl font-bold'>
-          🏠 next-govind
+          🏠 Trade My Property
         </Link>
 
         {/* Nav Links */}
         <div className='flex flex-wrap items-center gap-4 text-sm sm:text-base'>
 
-          <Link href="/property" className='hover:text-orange-300'>
+         <Link href="/property" className='hover:text-orange-300'>
             Browse Properties
+          </Link>
+
+          <Link href="/about" className='hover:text-orange-300'>
+            About
+          </Link>
+
+          <Link href="/contact" className='hover:text-orange-300'>
+            Contact
           </Link>
 
           {!loading && user && (
@@ -63,7 +71,7 @@ export default function Navbar() {
                 Dashboard
               </Link>
 
-            {/* Admin links - sirf tab dikhenge jab user Admin ho */}
+       {/* Admin links - only show when the user is an Admin */}
               {user.isAdmin && (
                 <>
                   <Link href="/admin/properties" className='hover:text-orange-300 font-semibold text-yellow-300'>
@@ -71,6 +79,9 @@ export default function Navbar() {
                   </Link>
                   <Link href="/admin/subscriptions" className='hover:text-orange-300 font-semibold text-yellow-300'>
                     Subscriptions
+                  </Link>
+                  <Link href="/admin/analytics" className='hover:text-orange-300 font-semibold text-yellow-300'>
+                    Analytics
                   </Link>
                 </>
               )}

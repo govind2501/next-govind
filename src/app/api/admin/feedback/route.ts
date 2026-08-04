@@ -1,14 +1,13 @@
 import { connect } from "@/dbConfig/dbConfig";
-import Subscription from "@/models/Subscriptionmodels";
+import Feedback from "@/models/feedbackmodels";
 import User from "@/models/userModels";
 import { getDataFromToken } from "@/helpers/getDataFromToken";
 import { NextRequest, NextResponse } from "next/server";
 
-connect();
-
 export async function GET(request: NextRequest) {
   try {
-    // Only an Admin can view this list
+    await connect();
+
     const requesterId = await getDataFromToken(request);
     const requester = await User.findById(requesterId);
 
@@ -19,35 +18,17 @@ export async function GET(request: NextRequest) {
       );
     }
 
-    // Get all subscriptions, along with the user's username/email
-    const subscriptions = await Subscription.find({})
+    const feedbackList = await Feedback.find({})
       .populate("user", "username email")
       .sort({ createdAt: -1 });
 
-    // Compute the real status of each subscription - based on endDate
-    const now = new Date();
-    const subscriptionsWithStatus = subscriptions.map((sub) => {
-      const subObj = sub.toObject();
-      const isExpired = new Date(subObj.endDate) < now;
-
-      return {
-        ...subObj,
-        computedStatus:
-          subObj.status === "Cancelled"
-            ? "Cancelled"
-            : isExpired
-            ? "Expired"
-            : "Active",
-      };
-    });
-
     return NextResponse.json({
       success: true,
-      subscriptions: subscriptionsWithStatus,
+      feedbackList,
     });
 
   } catch (error: any) {
-    console.log("Fetch subscriptions error:", error.message);
+    console.log("Fetch feedback error:", error.message);
     return NextResponse.json(
       { error: error.message },
       { status: 500 }
