@@ -5,32 +5,47 @@ import { toast } from 'react-hot-toast';
 import { useRouter } from 'next/navigation';
 import statesDistricts from '@/data/statesDistricts.json';
 
+    export default function AddPropertyPage() {
+      const router = useRouter();
+      const [loading, setLoading] = useState(false);
 
-export default function AddPropertyPage() {
-  const router = useRouter();
-  const [loading, setLoading] = useState(false);
+      
+      const [property, setProperty] = useState({
+        listingType: "Sell",  // "Sell" or "BuyerRequirement"
+        title: "",
+        description: "",
+        propertyType: "",     // Land / House / Shop
+        transactionType: "Sell",  // Sell / Rent
+        price: "",
+        priceUnit: "Total",
+        state: "",
+        district: "",
+        city: "",
+        address: "",
+        pincode: "",
+        area: "",
+        bedrooms: "",
+        bathrooms: "",
+        ownerName: "",
+        ownerEmail: "",
+        contactPhone: "",
+        images: [] as string[],
+      }); 
+    
+    
+    const isBuyerRequirement = property.listingType ===  "BuyerRequirement";
 
-  const [property, setProperty] = useState({
-    listingType: "Sell",  // "Sell" or "BuyerRequirement"
-    title: "",
-    description: "",
-    propertyType: "",     // Land / House / Shop
-    transactionType: "",  // Sell / Rent
-    price: "",
-    priceUnit: "Total",
-    state: "",
-    district: "",
-    city: "",
-    address: "",
-    pincode: "",
-    area: "",
-    bedrooms: "",
-    bathrooms: "",
-    ownerName: "",
-    ownerEmail: "",
-    contactPhone: "",
-    images: [] as string[],
-  });
+    // Sets both listingType and transactionType together based on the chosen mode
+    const selectMode = (mode: "Sell" | "Rent" | "Buy") => {
+    if (mode === "Sell") {
+      setProperty((prev) => ({ ...prev, listingType: "Sell", transactionType: "Sell" }));
+    } else if (mode === "Rent") {
+      setProperty((prev) => ({ ...prev, listingType: "Sell", transactionType: "Rent" }));
+    } else {
+      setProperty((prev) => ({ ...prev, listingType: "BuyerRequirement", transactionType: "Sell" }));
+    }
+  };
+
 
   const [imageError, setImageError] = useState("");
 
@@ -38,8 +53,7 @@ export default function AddPropertyPage() {
   const [districtList, setDistrictList] = useState<string[]>([]);
 
   const allStates = Object.keys(statesDistricts);
-
-  const isBuyerRequirement = property.listingType === "BuyerRequirement";
+ 
 
   // Whenever the state changes, load its districts
   useEffect(() => {
@@ -138,14 +152,14 @@ export default function AddPropertyPage() {
           </h1>
           <hr />
 
-          {/* Listing Type Toggle - Sell or Buyer Requirement */}
+          {/* Listing Type Toggle - Sell / Rent / Buyer Requirement */}
           <div>
             <label className='block mb-1'>What would you like to do?</label>
-            <div className='flex gap-4'>
+            <div className='flex gap-2 flex-wrap'>
               <button
                 type="button"
-                onClick={() => setProperty({ ...property, listingType: "Sell" })}
-                className={`flex-1 p-2 rounded-md font-semibold border-2 ${property.listingType === "Sell"
+                onClick={() => selectMode("Sell")}
+                className={`flex-1 p-2 rounded-md font-semibold border-2 ${property.listingType === "Sell" && property.transactionType === "Sell"
                     ? "bg-orange-600 text-black border-orange-700"
                     : "bg-white text-gray-700 border-gray-400"
                   }`}
@@ -154,7 +168,17 @@ export default function AddPropertyPage() {
               </button>
               <button
                 type="button"
-                onClick={() => setProperty({ ...property, listingType: "BuyerRequirement" })}
+                onClick={() => selectMode("Rent")}
+                className={`flex-1 p-2 rounded-md font-semibold border-2 ${property.listingType === "Sell" && property.transactionType === "Rent"
+                    ? "bg-orange-600 text-black border-orange-700"
+                    : "bg-white text-gray-700 border-gray-400"
+                  }`}
+              >
+                Rent Property
+              </button>
+              <button
+                type="button"
+                onClick={() => selectMode("Buy")}
                 className={`flex-1 p-2 rounded-md font-semibold border-2 ${property.listingType === "BuyerRequirement"
                     ? "bg-orange-600 text-black border-orange-700"
                     : "bg-white text-gray-700 border-gray-400"
@@ -179,7 +203,6 @@ export default function AddPropertyPage() {
                   onChange={(e) => setProperty({ ...property, title: e.target.value })}
                 />
               </div>
-
               <div>
                 <label className='block mb-1' htmlFor="description">Description</label>
                 <textarea
@@ -208,8 +231,10 @@ export default function AddPropertyPage() {
               />
             </div>
           )}
+          
 
           {/* Property Type & Transaction Type */}
+          {/*
           <div className='flex gap-4'>
             <div className='flex-1'>
               <label className='block mb-1' htmlFor="propertyType">Property Type</label>
@@ -227,7 +252,8 @@ export default function AddPropertyPage() {
             </div>
 
             <div className='flex-1'>
-              <label className='block mb-1' htmlFor="transactionType">For</label>
+              <label className='block mb-1' htmlFor="transactionType">For
+              </label>
               <select
                 id="transactionType"
                 className='w-full p-2 border border-gray-500 rounded-md text-black'
@@ -241,6 +267,22 @@ export default function AddPropertyPage() {
                 <option value="Rent">Rent</option>
               </select>
             </div>
+          </div>    */}
+
+          {/* Property Type */}
+          <div>
+            <label className='block mb-1' htmlFor="propertyType">Property Type</label>
+            <select
+              id="propertyType"
+              className='w-full p-2 border border-gray-500 rounded-md text-black'
+              value={property.propertyType}
+              onChange={(e) => setProperty({ ...property, propertyType: e.target.value })}
+            >
+              <option value="">Select Type</option>
+              <option value="Land">Land</option>
+              <option value="House">House</option>
+              <option value="Shop">Shop</option>
+            </select>
           </div>
 
           {/* Price & Price Unit */}
@@ -260,7 +302,8 @@ export default function AddPropertyPage() {
             </div>
             {!isBuyerRequirement && (
               <div className='flex-1'>
-                <label className='block mb-1' htmlFor="priceUnit">Price Unit</label>
+                <label className='block mb-1' htmlFor="priceUnit">Price Unit
+                </label>
                 <select
                   id="priceUnit"
                   className='w-full p-2 border border-gray-500 rounded-md text-black'
@@ -319,7 +362,8 @@ export default function AddPropertyPage() {
               {/* City & Pincode */}
               <div className='flex gap-4'>
                 <div className='flex-1'>
-                  <label className='block mb-1' htmlFor="city">City / Locality</label>
+                  <label className='block mb-1' htmlFor="city">City / Locality
+                  </label>
                   <input
                     id="city"
                     type="text"
@@ -354,11 +398,11 @@ export default function AddPropertyPage() {
                   onChange={(e) => setProperty({ ...property, address: e.target.value })}
                 />
               </div>
-
               {/* Area, Bedrooms, Bathrooms */}
               <div className='flex gap-4'>
                 <div className='flex-1'>
-                  <label className='block mb-1' htmlFor="area">Area (sqft)</label>
+                  <label className='block mb-1' htmlFor="area">Area (sqft)
+                  </label>
                   <input
                     id="area"
                     type="number"
@@ -392,7 +436,8 @@ export default function AddPropertyPage() {
           )}
           {/* Owner Name, Email, Phone - needed for both listing types */}
           <div>
-            <label className='block mb-1' htmlFor="ownerName">Your Name</label>
+            <label className='block mb-1' htmlFor="ownerName">Your Name
+            </label>
             <input
               id="ownerName"
               type="text"

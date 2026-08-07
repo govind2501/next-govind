@@ -4,6 +4,7 @@ import "./globals.css";
 import { Toaster } from "react-hot-toast";
 import Navbar from "../components/navbar"
 import VisitTracker from "@/components/VisitTracker";
+import Footer from "@/components/Footer";
 
 
 const geistMono = Geist_Mono({
@@ -25,7 +26,7 @@ export default function RootLayout({
     <html
       lang="en">
 
-      <body>
+     <body className="flex flex-col min-h-screen">
         
         <Navbar />
 
@@ -33,9 +34,11 @@ export default function RootLayout({
 
         <VisitTracker />
         
-        {children}
-        
-        
+        <main className="flex-1 pt-[68px] pb-[88px]">
+          {children}
+        </main>
+
+        <Footer />
         
         </body>
 

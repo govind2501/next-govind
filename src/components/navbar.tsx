@@ -38,18 +38,18 @@ export default function Navbar() {
   };
 
   return (
-    <nav className='bg-orange-900 text-white px-4 py-3 shadow-md'>
-      <div className='max-w-6xl mx-auto flex flex-wrap items-center justify-between gap-3'>
+    <nav className='fixed top-0 left-0 w-full z-50 bg-orange-900 text-white px-3 py-2 shadow-md'>
+      <div className='max-w-6xl mx-auto flex items-center justify-between gap-3'>
 
         {/* Logo / Home */}
-        <Link href="/" className='text-xl font-bold'>
+        <Link href="/" className='text-base sm:text-lg font-bold shrink-0'>
           🏠 Trade My Property
         </Link>
 
-        {/* Nav Links */}
-        <div className='flex flex-wrap items-center gap-4 text-sm sm:text-base'>
+        {/* Nav Links - single line, horizontally scrollable if too many */}
+        <div className='flex items-center gap-3 text-xs sm:text-sm overflow-x-auto whitespace-nowrap scrollbar-hide'>
 
-         <Link href="/property" className='hover:text-orange-300'>
+          <Link href="/property" className='hover:text-orange-300'>
             Browse Properties
           </Link>
 
@@ -71,14 +71,14 @@ export default function Navbar() {
                 Dashboard
               </Link>
 
-       {/* Admin links - only show when the user is an Admin */}
+              {/* Admin links - only show when the user is an Admin */}
               {user.isAdmin && (
                 <>
                   <Link href="/admin/properties" className='hover:text-orange-300 font-semibold text-yellow-300'>
-                    Admin Panel
+                    Admin
                   </Link>
                   <Link href="/admin/subscriptions" className='hover:text-orange-300 font-semibold text-yellow-300'>
-                    Subscriptions
+                    Subs
                   </Link>
                   <Link href="/admin/analytics" className='hover:text-orange-300 font-semibold text-yellow-300'>
                     Analytics
@@ -88,7 +88,7 @@ export default function Navbar() {
 
               <button
                 onClick={handleLogout}
-                className='bg-orange-600 px-3 py-1 rounded-md font-bold text-black hover:bg-orange-700'
+                className='bg-orange-600 px-2 py-1 rounded-md font-bold text-black hover:bg-orange-700 shrink-0'
               >
                 Logout
               </button>
@@ -102,7 +102,7 @@ export default function Navbar() {
               </Link>
               <Link
                 href="/signup"
-                className='bg-orange-600 px-3 py-1 rounded-md font-bold text-black hover:bg-orange-700'
+                className='bg-orange-600 px-2 py-1 rounded-md font-bold text-black hover:bg-orange-700 shrink-0'
               >
                 Signup
               </Link>

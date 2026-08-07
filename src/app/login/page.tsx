@@ -111,8 +111,7 @@ export default function LoginPage() {
               >
                 Terms & Conditions
               </Link>
-              , including that I must independently verify any property before transacting,
-              and that subscription payments are non-refundable.
+              , including that I must independently verify any property before transacting.
             </label>
           </div>
 
