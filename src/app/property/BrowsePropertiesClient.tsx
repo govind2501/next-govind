@@ -148,17 +148,7 @@ export default function BrowsePropertiesClient({
             ))}
           </select>
 
-            { /* <select
-            className='p-2 border border-gray-500 rounded-md text-black text-sm sm:text-base w-full'
-            value={filters.propertyType}
-            onChange={(e) => updateFilter("propertyType", e.target.value)}
-          >
-            <option value="">All Types</option>
-            <option value="Land">Land</option>
-            <option value="House">House</option>
-            <option value="Shop">Shop</option>
-            </select>  */}
-
+      
           <select
             className='p-2 border border-gray-500 rounded-md text-black text-sm sm:text-base w-full'
             value={filters.transactionType}
@@ -202,18 +192,18 @@ export default function BrowsePropertiesClient({
                   ) : (
                     <span className='text-gray-500'>No Image</span>
                   )}
-                </div>
+      </div>
 
-                {/* Details */}
-                <div className='p-4'>
-                  <div className='flex items-center gap-2'>
-                    <h2 className='text-lg font-bold text-orange-900 truncate'>{cardTitle}</h2>
-                    {isBuyer && (
+      {/* Details */}
+      <div className='p-4'>
+      <div className='flex items-center gap-2'>
+      <h2 className='text-lg font-bold text-orange-900 truncate'>{cardTitle}</h2>
+     {isBuyer && (
                       <span className='text-xs font-bold bg-blue-600 text-white px-2 py-1 rounded shrink-0'>
-                        BUYER
+                        {prop.transactionType === "Rent" ? "RENTER" : "BUYER"}
                       </span>
                     )}
-                  </div>
+     </div>
 
                   <p className='text-sm text-gray-600 mt-1'>
                     {prop.district}, {prop.state}

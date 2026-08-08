@@ -35,16 +35,18 @@ import statesDistricts from '@/data/statesDistricts.json';
     
     const isBuyerRequirement = property.listingType ===  "BuyerRequirement";
 
-    // Sets both listingType and transactionType together based on the chosen mode
-    const selectMode = (mode: "Sell" | "Rent" | "Buy") => {
+   // Sets both listingType and transactionType together based on the chosen mode
+  const selectMode = (mode: "Sell" | "RentOut" | "Buy" | "WantToRent") => {
     if (mode === "Sell") {
       setProperty((prev) => ({ ...prev, listingType: "Sell", transactionType: "Sell" }));
-    } else if (mode === "Rent") {
+    } else if (mode === "RentOut") {
       setProperty((prev) => ({ ...prev, listingType: "Sell", transactionType: "Rent" }));
-    } else {
+    } else if (mode === "Buy") {
       setProperty((prev) => ({ ...prev, listingType: "BuyerRequirement", transactionType: "Sell" }));
+    } else {
+      setProperty((prev) => ({ ...prev, listingType: "BuyerRequirement", transactionType: "Rent" }));
     }
-  };
+  };;
 
 
   const [imageError, setImageError] = useState("");
@@ -152,39 +154,53 @@ import statesDistricts from '@/data/statesDistricts.json';
           </h1>
           <hr />
 
-          {/* Listing Type Toggle - Sell / Rent / Buyer Requirement */}
+         {/* Listing Type Toggle - Sell / Rent Out / Want to Buy / Want to Rent */}
           <div>
             <label className='block mb-1'>What would you like to do?</label>
-            <div className='flex gap-2 flex-wrap'>
+            <div className='grid grid-cols-2 gap-2'>
               <button
                 type="button"
                 onClick={() => selectMode("Sell")}
-                className={`flex-1 p-2 rounded-md font-semibold border-2 ${property.listingType === "Sell" && property.transactionType === "Sell"
+                className={`p-2 rounded-md font-semibold border-2 text-sm ${
+                  property.listingType === "Sell" && property.transactionType === "Sell"
                     ? "bg-orange-600 text-black border-orange-700"
                     : "bg-white text-gray-700 border-gray-400"
-                  }`}
+                }`}
               >
                 Sell Property
               </button>
               <button
                 type="button"
-                onClick={() => selectMode("Rent")}
-                className={`flex-1 p-2 rounded-md font-semibold border-2 ${property.listingType === "Sell" && property.transactionType === "Rent"
+                onClick={() => selectMode("RentOut")}
+                className={`p-2 rounded-md font-semibold border-2 text-sm ${
+                  property.listingType === "Sell" && property.transactionType === "Rent"
                     ? "bg-orange-600 text-black border-orange-700"
                     : "bg-white text-gray-700 border-gray-400"
-                  }`}
+                }`}
               >
-                Rent Property
+                Rent Out Property
               </button>
               <button
                 type="button"
                 onClick={() => selectMode("Buy")}
-                className={`flex-1 p-2 rounded-md font-semibold border-2 ${property.listingType === "BuyerRequirement"
+                className={`p-2 rounded-md font-semibold border-2 text-sm ${
+                  property.listingType === "BuyerRequirement" && property.transactionType === "Sell"
                     ? "bg-orange-600 text-black border-orange-700"
                     : "bg-white text-gray-700 border-gray-400"
-                  }`}
+                }`}
               >
-                I Want to Buy Property
+                I Want to Buy Property 
+              </button>
+              <button
+                type="button"
+                onClick={() => selectMode("WantToRent")}
+                className={`p-2 rounded-md font-semibold border-2 text-sm ${
+                  property.listingType === "BuyerRequirement" && property.transactionType === "Rent"
+                    ? "bg-orange-600 text-black border-orange-700"
+                    : "bg-white text-gray-700 border-gray-400"
+                }`}
+              >
+                I Want to Rent
               </button>
             </div>
           </div>
@@ -230,47 +246,9 @@ import statesDistricts from '@/data/statesDistricts.json';
                 onChange={(e) => setProperty({ ...property, description: e.target.value })}
               />
             </div>
-          )}
-          
-
-          {/* Property Type & Transaction Type */}
-          {/*
-          <div className='flex gap-4'>
-            <div className='flex-1'>
-              <label className='block mb-1' htmlFor="propertyType">Property Type</label>
-              <select
-                id="propertyType"
-                className='w-full p-2 border border-gray-500 rounded-md text-black'
-                value={property.propertyType}
-                onChange={(e) => setProperty({ ...property, propertyType: e.target.value })}
-              >
-                <option value="">Select Type</option>
-                <option value="Land">Land</option>
-                <option value="House">House</option>
-                <option value="Shop">Shop</option>
-              </select>
-            </div>
-
-            <div className='flex-1'>
-              <label className='block mb-1' htmlFor="transactionType">For
-              </label>
-              <select
-                id="transactionType"
-                className='w-full p-2 border border-gray-500 rounded-md text-black'
-                value={property.transactionType}
-                onChange={(e) => setProperty({ ...property, transactionType: e.target.value })}
-              >
-                <option value="">Select</option>
-                <option value="Sell">
-                  {isBuyerRequirement ? "Buy" : "Sell"}
-                </option>
-                <option value="Rent">Rent</option>
-              </select>
-            </div>
-          </div>    */}
-
-          {/* Property Type */}
-          <div>
+            )}
+           {/* Property Type */}
+            <div>
             <label className='block mb-1' htmlFor="propertyType">Property Type</label>
             <select
               id="propertyType"
