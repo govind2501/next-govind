@@ -73,15 +73,15 @@ export default function AnalyticsClient({
   };
 
   return (
-    <div className='min-h-screen p-6 bg-slate-100'>
+    <div className='min-h-screen p-6'>
       <div className='max-w-6xl mx-auto'>
-        <h1 className='text-2xl font-bold text-orange-900 mb-6'>
+        <h1 className='text-2xl font-bold text-white drop-shadow-md mb-6'>
           Visitor Analytics & Feedback
         </h1>
 
         {/* Page-wise Stats */}
-        <h2 className='text-lg font-bold text-orange-900 mb-3'>Page Visit Statistics</h2>
-        <div className='overflow-x-auto bg-white rounded-lg shadow mb-8'>
+        <h2 className='text-lg font-bold text-white drop-shadow-md mb-3'>Page Visit Statistics</h2>
+        <div className='overflow-x-auto bg-white/95 dark:bg-slate-800/95 rounded-2xl shadow-xl mb-8'>
           <table className='w-full text-left text-sm border-collapse'>
             <thead>
               <tr className='bg-orange-800'>
@@ -93,17 +93,17 @@ export default function AnalyticsClient({
             </thead>
             <tbody>
               {stats.map((stat, index) => (
-                <tr key={stat._id} className={index % 2 === 0 ? "bg-yellow-50" : "bg-white"}>
-                  <td className='p-3 text-black border border-gray-300'>{stat._id}</td>
-                  <td className='p-3 text-black border border-gray-300'>{stat.totalVisits}</td>
-                  <td className='p-3 text-black border border-gray-300'>
+                <tr key={stat._id} className={index % 2 === 0 ? "bg-yellow-50 dark:bg-slate-700" : "bg-white dark:bg-slate-800"}>
+                  <td className='p-3 text-black dark:text-gray-100 border border-gray-300 dark:border-gray-600'>{stat._id}</td>
+                  <td className='p-3 text-black dark:text-gray-100 border border-gray-300 dark:border-gray-600'>{stat.totalVisits}</td>
+                  <td className='p-3 text-black dark:text-gray-100 border border-gray-300 dark:border-gray-600'>
                     {formatDuration(stat.averageDurationSeconds)}
                   </td>
-                  <td className='p-3 border border-gray-300'>
+                  <td className='p-3 border border-gray-300 dark:border-gray-600'>
                     <button
                       onClick={() => handleDeleteStats(stat._id)}
                       disabled={deletingPage === stat._id}
-                      className='text-red-600 hover:text-red-800 text-xs font-bold border border-red-300 rounded px-2 py-1 disabled:opacity-50'
+                      className='text-red-600 dark:text-red-400 hover:text-red-800 dark:hover:text-red-300 text-xs font-bold border border-red-300 dark:border-red-500 rounded px-2 py-1 disabled:opacity-50'
                     >
                       {deletingPage === stat._id ? "Deleting..." : "Delete"}
                     </button>
@@ -114,39 +114,43 @@ export default function AnalyticsClient({
           </table>
         </div>
         {stats.length === 0 && (
-          <p className='text-center text-gray-500 mb-8'>No visit data yet</p>
+          <div className='bg-white/95 dark:bg-slate-800/95 rounded-2xl shadow-xl p-6 text-center mb-8'>
+            <p className='text-gray-500 dark:text-gray-400'>No visit data yet</p>
+          </div>
         )}
 
         {/* Feedback List */}
-        <h2 className='text-lg font-bold text-orange-900 mb-3'>Customer Feedback</h2>
+        <h2 className='text-lg font-bold text-white drop-shadow-md mb-3'>Customer Feedback</h2>
         <div className='flex flex-col gap-3'>
           {feedbackList.map((fb) => (
-            <div key={fb._id} className='bg-white rounded-lg shadow p-4'>
+            <div key={fb._id} className='bg-white/95 dark:bg-slate-800/95 rounded-2xl shadow-xl p-4'>
               <div className='flex justify-between items-start flex-wrap gap-2'>
-                <span className='font-bold text-orange-900'>{fb.reason}</span>
+                <span className='font-bold text-orange-900 dark:text-orange-300'>{fb.reason}</span>
                 <div className='flex items-center gap-3'>
-                  <span className='text-xs text-gray-500'>{formatDate(fb.createdAt)}</span>
+                  <span className='text-xs text-gray-500 dark:text-gray-400'>{formatDate(fb.createdAt)}</span>
                   <button
                     onClick={() => handleDeleteFeedback(fb._id)}
                     disabled={deletingId === fb._id}
-                    className='text-red-600 hover:text-red-800 text-xs font-bold border border-red-300 rounded px-2 py-1 disabled:opacity-50'
+                    className='text-red-600 dark:text-red-400 hover:text-red-800 dark:hover:text-red-300 text-xs font-bold border border-red-300 dark:border-red-500 rounded px-2 py-1 disabled:opacity-50'
                   >
                     {deletingId === fb._id ? "Deleting..." : "Delete"}
                   </button>
                 </div>
               </div>
-              <p className='text-sm text-gray-600 mt-1'>Page: {fb.page}</p>
-              <p className='text-sm text-gray-600'>
+              <p className='text-sm text-gray-600 dark:text-gray-300 mt-1'>Page: {fb.page}</p>
+              <p className='text-sm text-gray-600 dark:text-gray-300'>
                 From: {fb.user ? `${fb.user.username} (${fb.user.email})` : "Anonymous visitor"}
               </p>
               {fb.message && (
-                <p className='text-gray-800 mt-2 border-t pt-2'>{fb.message}</p>
+                <p className='text-gray-800 dark:text-gray-200 mt-2 border-t border-gray-300 dark:border-gray-600 pt-2'>{fb.message}</p>
               )}
             </div>
           ))}
         </div>
         {feedbackList.length === 0 && (
-          <p className='text-center text-gray-500 mt-6'>No feedback yet</p>
+          <div className='bg-white/95 dark:bg-slate-800/95 rounded-2xl shadow-xl p-6 text-center mt-6'>
+            <p className='text-gray-500 dark:text-gray-400'>No feedback yet</p>
+          </div>
         )}
       </div>
     </div>

@@ -34,24 +34,24 @@ export default function ContactPage() {
   };
 
   return (
-    <div className='min-h-screen px-4 py-12 bg-slate-100'>
-      <div className='max-w-xl mx-auto bg-white rounded-lg shadow-md p-6 sm:p-8'>
+    <div className='min-h-screen px-4 py-12'>
+      <div className='max-w-xl mx-auto bg-white/95 dark:bg-slate-800/95 rounded-2xl shadow-xl p-6 sm:p-8'>
 
-        <h1 className='text-2xl sm:text-3xl font-bold text-orange-900 mb-2 text-center'>
+        <h1 className='text-2xl sm:text-3xl font-bold text-orange-900 dark:text-orange-300 mb-2 text-center'>
           Contact Us
         </h1>
-        <p className='text-gray-600 text-center mb-6'>
+        <p className='text-gray-600 dark:text-gray-300 text-center mb-6'>
           Have a question or need help? Send us a message and we'll respond soon.
         </p>
 
         <form onSubmit={onSubmit} className='flex flex-col gap-4'>
 
           <div>
-            <label className='block mb-1' htmlFor="name">Name</label>
+            <label className='block mb-1 text-gray-800 dark:text-gray-200' htmlFor="name">Name</label>
             <input
               id="name"
               type="text"
-              className='w-full p-2 border border-gray-500 rounded-md text-black'
+              className='w-full p-2 border border-gray-500 dark:border-gray-600 rounded-md text-black dark:text-white dark:bg-slate-700'
               placeholder='Your name'
               value={form.name}
               onChange={(e) => setForm({ ...form, name: e.target.value })}
@@ -59,11 +59,11 @@ export default function ContactPage() {
           </div>
 
           <div>
-            <label className='block mb-1' htmlFor="email">Email</label>
+            <label className='block mb-1 text-gray-800 dark:text-gray-200' htmlFor="email">Email</label>
             <input
               id="email"
               type="email"
-              className='w-full p-2 border border-gray-500 rounded-md text-black'
+              className='w-full p-2 border border-gray-500 dark:border-gray-600 rounded-md text-black dark:text-white dark:bg-slate-700'
               placeholder='you@example.com'
               value={form.email}
               onChange={(e) => setForm({ ...form, email: e.target.value })}
@@ -71,11 +71,11 @@ export default function ContactPage() {
           </div>
 
           <div>
-            <label className='block mb-1' htmlFor="phone">Phone (optional)</label>
+            <label className='block mb-1 text-gray-800 dark:text-gray-200' htmlFor="phone">Phone (optional)</label>
             <input
               id="phone"
               type="tel"
-              className='w-full p-2 border border-gray-500 rounded-md text-black'
+              className='w-full p-2 border border-gray-500 dark:border-gray-600 rounded-md text-black dark:text-white dark:bg-slate-700'
               placeholder='9876543210'
               value={form.phone}
               onChange={(e) => setForm({ ...form, phone: e.target.value })}
@@ -83,11 +83,11 @@ export default function ContactPage() {
           </div>
 
           <div>
-            <label className='block mb-1' htmlFor="message">Message</label>
+            <label className='block mb-1 text-gray-800 dark:text-gray-200' htmlFor="message">Message</label>
             <textarea
               id="message"
               rows={4}
-              className='w-full p-2 border border-gray-500 rounded-md text-black'
+              className='w-full p-2 border border-gray-500 dark:border-gray-600 rounded-md text-black dark:text-white dark:bg-slate-700'
               placeholder='How can we help you?'
               value={form.message}
               onChange={(e) => setForm({ ...form, message: e.target.value })}

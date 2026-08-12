@@ -7,7 +7,6 @@ export default async function BrowsePropertyPage({
 }: {
   searchParams: Promise<{ [key: string]: string | undefined }>;
 }) {
-  // In Next.js 16, searchParams is a Promise, so it must be awaited
   const params = await searchParams;
 
   const state = params.state || "";
@@ -15,19 +14,24 @@ export default async function BrowsePropertyPage({
   const propertyType = params.propertyType || "";
   const transactionType = params.transactionType || "";
   const listingType = params.listingType || "";
+  const search = params.search || "";
   const page = parseInt(params.page || "1");
   const limit = 10;
   const skip = (page - 1) * limit;
 
   await connect();
 
-  // Build the filter object - only add the fields that were actually provided
   const filter: any = { status: "Approved" };
   if (state) filter.state = state;
   if (district) filter.district = district;
   if (propertyType) filter.propertyType = propertyType;
   if (transactionType) filter.transactionType = transactionType;
   if (listingType) filter.listingType = listingType;
+
+  // Search by title, matching partial words, case-insensitive
+  if (search) {
+    filter.title = { $regex: search, $options: "i" };
+  }
 
   const totalProperties = await Property.countDocuments(filter);
 

@@ -5,37 +5,34 @@ import { toast } from 'react-hot-toast';
 import { useRouter } from 'next/navigation';
 import statesDistricts from '@/data/statesDistricts.json';
 
-    export default function AddPropertyPage() {
-      const router = useRouter();
-      const [loading, setLoading] = useState(false);
+export default function AddPropertyPage() {
+  const router = useRouter();
+  const [loading, setLoading] = useState(false);
 
-      
-      const [property, setProperty] = useState({
-        listingType: "Sell",  // "Sell" or "BuyerRequirement"
-        title: "",
-        description: "",
-        propertyType: "",     // Land / House / Shop
-        transactionType: "Sell",  // Sell / Rent
-        price: "",
-        priceUnit: "Total",
-        state: "",
-        district: "",
-        city: "",
-        address: "",
-        pincode: "",
-        area: "",
-        bedrooms: "",
-        bathrooms: "",
-        ownerName: "",
-        ownerEmail: "",
-        contactPhone: "",
-        images: [] as string[],
-      }); 
-    
-    
-    const isBuyerRequirement = property.listingType ===  "BuyerRequirement";
+  const [property, setProperty] = useState({
+    listingType: "Sell",
+    title: "",
+    description: "",
+    propertyType: "",
+    transactionType: "Sell",
+    price: "",
+    priceUnit: "Total",
+    state: "",
+    district: "",
+    city: "",
+    address: "",
+    pincode: "",
+    area: "",
+    bedrooms: "",
+    bathrooms: "",
+    ownerName: "",
+    ownerEmail: "",
+    contactPhone: "",
+    images: [] as string[],
+  });
 
-   // Sets both listingType and transactionType together based on the chosen mode
+  const isBuyerRequirement = property.listingType === "BuyerRequirement";
+
   const selectMode = (mode: "Sell" | "RentOut" | "Buy" | "WantToRent") => {
     if (mode === "Sell") {
       setProperty((prev) => ({ ...prev, listingType: "Sell", transactionType: "Sell" }));
@@ -46,28 +43,20 @@ import statesDistricts from '@/data/statesDistricts.json';
     } else {
       setProperty((prev) => ({ ...prev, listingType: "BuyerRequirement", transactionType: "Rent" }));
     }
-  };;
-
+  };
 
   const [imageError, setImageError] = useState("");
-
-  // District list state - updates based on the selected state
   const [districtList, setDistrictList] = useState<string[]>([]);
-
   const allStates = Object.keys(statesDistricts);
- 
 
-  // Whenever the state changes, load its districts
   useEffect(() => {
     if (property.state && (statesDistricts as any)[property.state]) {
       setDistrictList((statesDistricts as any)[property.state]);
     } else {
       setDistrictList([]);
     }
-    // Reset the previously selected district when state changes
     setProperty((prev) => ({ ...prev, district: "" }));
   }, [property.state]);
-
 
   const MAX_IMAGE_SIZE_KB = 120;
   const MAX_IMAGES = 120;
@@ -90,11 +79,10 @@ import statesDistricts from '@/data/statesDistricts.json';
       setImageError(
         `"${file.name}" is ${fileSizeKB.toFixed(1)}KB. Photo must be smaller than ${MAX_IMAGE_SIZE_KB}KB.`
       );
-      e.target.value = ""; // reset the input
+      e.target.value = "";
       return;
     }
 
-    // Convert the file to base64 and add it to the images array
     const reader = new FileReader();
     reader.onload = () => {
       const base64String = reader.result as string;
@@ -105,7 +93,7 @@ import statesDistricts from '@/data/statesDistricts.json';
     };
     reader.readAsDataURL(file);
 
-    e.target.value = ""; // so the same file can be selected again if needed
+    e.target.value = "";
   };
 
   const removeImage = (index: number) => {
@@ -118,13 +106,11 @@ import statesDistricts from '@/data/statesDistricts.json';
   const onSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
-    // Title/description are required only for Sell listings
     if (!isBuyerRequirement && (!property.title || !property.description)) {
       toast.error("Please fill title and description");
       return;
     }
 
-    // These fields are always required for both listing types
     if (!property.propertyType || !property.transactionType || !property.price ||
       !property.state || !property.district || !property.ownerName || !property.contactPhone) {
       toast.error("Please fill all required fields");
@@ -143,20 +129,22 @@ import statesDistricts from '@/data/statesDistricts.json';
     }
   };
 
+  const inputClass = 'w-full p-2 border border-gray-500 dark:border-gray-600 rounded-md text-black dark:text-white dark:bg-slate-700';
+  const labelClass = 'block mb-1 dark:text-gray-200';
+
   return (
-    <div className='min-h-screen flex items-center justify-center py-8'>
-      <div className='w-full max-w-2xl p-8 rounded-lg shadow-md bg-slate-300 text-orange-900'>
+    <div className='min-h-screen flex items-center justify-center py-8 px-4'>
+      <div className='w-full max-w-2xl p-6 sm:p-8 rounded-2xl shadow-xl bg-white/95 dark:bg-slate-800/95 text-orange-900 dark:text-orange-300'>
 
         <form onSubmit={onSubmit} className='flex flex-col gap-4'>
 
           <h1 className='text-2xl font-bold text-center'>
             {loading ? "Submitting..." : "Add Property"}
           </h1>
-          <hr />
+          <hr className='border-gray-300 dark:border-gray-600' />
 
-         {/* Listing Type Toggle - Sell / Rent Out / Want to Buy / Want to Rent */}
           <div>
-            <label className='block mb-1'>What would you like to do?</label>
+            <label className={labelClass}>What would you like to do?</label>
             <div className='grid grid-cols-2 gap-2'>
               <button
                 type="button"
@@ -164,7 +152,7 @@ import statesDistricts from '@/data/statesDistricts.json';
                 className={`p-2 rounded-md font-semibold border-2 text-sm ${
                   property.listingType === "Sell" && property.transactionType === "Sell"
                     ? "bg-orange-600 text-black border-orange-700"
-                    : "bg-white text-gray-700 border-gray-400"
+                    : "bg-white dark:bg-slate-700 text-gray-700 dark:text-gray-200 border-gray-400 dark:border-gray-600"
                 }`}
               >
                 Sell Property
@@ -175,7 +163,7 @@ import statesDistricts from '@/data/statesDistricts.json';
                 className={`p-2 rounded-md font-semibold border-2 text-sm ${
                   property.listingType === "Sell" && property.transactionType === "Rent"
                     ? "bg-orange-600 text-black border-orange-700"
-                    : "bg-white text-gray-700 border-gray-400"
+                    : "bg-white dark:bg-slate-700 text-gray-700 dark:text-gray-200 border-gray-400 dark:border-gray-600"
                 }`}
               >
                 Rent Out Property
@@ -186,10 +174,10 @@ import statesDistricts from '@/data/statesDistricts.json';
                 className={`p-2 rounded-md font-semibold border-2 text-sm ${
                   property.listingType === "BuyerRequirement" && property.transactionType === "Sell"
                     ? "bg-orange-600 text-black border-orange-700"
-                    : "bg-white text-gray-700 border-gray-400"
+                    : "bg-white dark:bg-slate-700 text-gray-700 dark:text-gray-200 border-gray-400 dark:border-gray-600"
                 }`}
               >
-                I Want to Buy Property 
+                I Want to Buy Property
               </button>
               <button
                 type="button"
@@ -197,7 +185,7 @@ import statesDistricts from '@/data/statesDistricts.json';
                 className={`p-2 rounded-md font-semibold border-2 text-sm ${
                   property.listingType === "BuyerRequirement" && property.transactionType === "Rent"
                     ? "bg-orange-600 text-black border-orange-700"
-                    : "bg-white text-gray-700 border-gray-400"
+                    : "bg-white dark:bg-slate-700 text-gray-700 dark:text-gray-200 border-gray-400 dark:border-gray-600"
                 }`}
               >
                 I Want to Rent
@@ -205,25 +193,24 @@ import statesDistricts from '@/data/statesDistricts.json';
             </div>
           </div>
 
-          {/* Title & Description - only for Sell listings */}
           {!isBuyerRequirement && (
             <>
               <div>
-                <label className='block mb-1' htmlFor="title">Title</label>
+                <label className={labelClass} htmlFor="title">Title</label>
                 <input
                   id="title"
                   type="text"
-                  className='w-full p-2 border border-gray-500 rounded-md text-black focus:outline-none focus:ring-2 focus:ring-blue-700'
+                  className={`${inputClass} focus:outline-none focus:ring-2 focus:ring-blue-700`}
                   placeholder='e.g. 2BHK Flat for Sale in Lucknow'
                   value={property.title}
                   onChange={(e) => setProperty({ ...property, title: e.target.value })}
                 />
               </div>
               <div>
-                <label className='block mb-1' htmlFor="description">Description</label>
+                <label className={labelClass} htmlFor="description">Description</label>
                 <textarea
                   id="description"
-                  className='w-full p-2 border border-gray-500 rounded-md text-black focus:outline-none focus:ring-2 focus:ring-blue-700'
+                  className={`${inputClass} focus:outline-none focus:ring-2 focus:ring-blue-700`}
                   placeholder='Enter details about the property'
                   rows={3}
                   value={property.description}
@@ -233,26 +220,25 @@ import statesDistricts from '@/data/statesDistricts.json';
             </>
           )}
 
-          {/* Message - only for Buyer Requirement */}
           {isBuyerRequirement && (
             <div>
-              <label className='block mb-1' htmlFor="description">Your Message</label>
+              <label className={labelClass} htmlFor="description">Your Message</label>
               <textarea
                 id="description"
-                className='w-full p-2 border border-gray-500 rounded-md text-black focus:outline-none focus:ring-2 focus:ring-blue-700'
+                className={`${inputClass} focus:outline-none focus:ring-2 focus:ring-blue-700`}
                 placeholder='e.g. I need a 2BHK flat in Gomti Nagar, Lucknow, budget up to 25 lakh'
                 rows={3}
                 value={property.description}
                 onChange={(e) => setProperty({ ...property, description: e.target.value })}
               />
             </div>
-            )}
-           {/* Property Type */}
-            <div>
-            <label className='block mb-1' htmlFor="propertyType">Property Type</label>
+          )}
+
+          <div>
+            <label className={labelClass} htmlFor="propertyType">Property Type</label>
             <select
               id="propertyType"
-              className='w-full p-2 border border-gray-500 rounded-md text-black'
+              className={inputClass}
               value={property.propertyType}
               onChange={(e) => setProperty({ ...property, propertyType: e.target.value })}
             >
@@ -263,16 +249,15 @@ import statesDistricts from '@/data/statesDistricts.json';
             </select>
           </div>
 
-          {/* Price & Price Unit */}
           <div className='flex gap-4'>
             <div className='flex-1'>
-              <label className='block mb-1' htmlFor="price">
+              <label className={labelClass} htmlFor="price">
                 {isBuyerRequirement ? "Budget (₹)" : "Price (₹)"}
               </label>
               <input
                 id="price"
                 type="number"
-                className='w-full p-2 border border-gray-500 rounded-md text-black'
+                className={inputClass}
                 placeholder='e.g. 2500000'
                 value={property.price}
                 onChange={(e) => setProperty({ ...property, price: e.target.value })}
@@ -280,11 +265,10 @@ import statesDistricts from '@/data/statesDistricts.json';
             </div>
             {!isBuyerRequirement && (
               <div className='flex-1'>
-                <label className='block mb-1' htmlFor="priceUnit">Price Unit
-                </label>
+                <label className={labelClass} htmlFor="priceUnit">Price Unit</label>
                 <select
                   id="priceUnit"
-                  className='w-full p-2 border border-gray-500 rounded-md text-black'
+                  className={inputClass}
                   value={property.priceUnit}
                   onChange={(e) => setProperty({ ...property, priceUnit: e.target.value })}
                 >
@@ -296,13 +280,12 @@ import statesDistricts from '@/data/statesDistricts.json';
             )}
           </div>
 
-          {/* State & District - Cascading Dropdown */}
           <div className='flex gap-4'>
             <div className='flex-1'>
-              <label className='block mb-1' htmlFor="state">State</label>
+              <label className={labelClass} htmlFor="state">State</label>
               <select
                 id="state"
-                className='w-full p-2 border border-gray-500 rounded-md text-black'
+                className={inputClass}
                 value={property.state}
                 onChange={(e) => setProperty({ ...property, state: e.target.value })}
               >
@@ -314,12 +297,12 @@ import statesDistricts from '@/data/statesDistricts.json';
             </div>
 
             <div className='flex-1'>
-              <label className='block mb-1' htmlFor="district">
+              <label className={labelClass} htmlFor="district">
                 {isBuyerRequirement ? "District You Want Property In" : "District"}
               </label>
               <select
                 id="district"
-                className='w-full p-2 border border-gray-500 rounded-md text-black'
+                className={inputClass}
                 value={property.district}
                 onChange={(e) => setProperty({ ...property, district: e.target.value })}
                 disabled={!property.state}
@@ -334,29 +317,26 @@ import statesDistricts from '@/data/statesDistricts.json';
             </div>
           </div>
 
-          {/* These fields only show for Sell listings */}
           {!isBuyerRequirement && (
             <>
-              {/* City & Pincode */}
               <div className='flex gap-4'>
                 <div className='flex-1'>
-                  <label className='block mb-1' htmlFor="city">City / Locality
-                  </label>
+                  <label className={labelClass} htmlFor="city">City / Locality</label>
                   <input
                     id="city"
                     type="text"
-                    className='w-full p-2 border border-gray-500 rounded-md text-black'
+                    className={inputClass}
                     placeholder='e.g. Gomti Nagar'
                     value={property.city}
                     onChange={(e) => setProperty({ ...property, city: e.target.value })}
                   />
                 </div>
                 <div className='flex-1'>
-                  <label className='block mb-1' htmlFor="pincode">Pincode</label>
+                  <label className={labelClass} htmlFor="pincode">Pincode</label>
                   <input
                     id="pincode"
                     type="text"
-                    className='w-full p-2 border border-gray-500 rounded-md text-black'
+                    className={inputClass}
                     placeholder='e.g. 226010'
                     value={property.pincode}
                     onChange={(e) => setProperty({ ...property, pincode: e.target.value })}
@@ -364,47 +344,45 @@ import statesDistricts from '@/data/statesDistricts.json';
                 </div>
               </div>
 
-              {/* Address */}
               <div>
-                <label className='block mb-1' htmlFor="address">Full Address</label>
+                <label className={labelClass} htmlFor="address">Full Address</label>
                 <input
                   id="address"
                   type="text"
-                  className='w-full p-2 border border-gray-500 rounded-md text-black'
+                  className={inputClass}
                   placeholder='Enter full address'
                   value={property.address}
                   onChange={(e) => setProperty({ ...property, address: e.target.value })}
                 />
               </div>
-              {/* Area, Bedrooms, Bathrooms */}
+
               <div className='flex gap-4'>
                 <div className='flex-1'>
-                  <label className='block mb-1' htmlFor="area">Area (sqft)
-                  </label>
+                  <label className={labelClass} htmlFor="area">Area (sqft)</label>
                   <input
                     id="area"
                     type="number"
-                    className='w-full p-2 border border-gray-500 rounded-md text-black'
+                    className={inputClass}
                     value={property.area}
                     onChange={(e) => setProperty({ ...property, area: e.target.value })}
                   />
                 </div>
                 <div className='flex-1'>
-                  <label className='block mb-1' htmlFor="bedrooms">Bedrooms</label>
+                  <label className={labelClass} htmlFor="bedrooms">Bedrooms</label>
                   <input
                     id="bedrooms"
                     type="number"
-                    className='w-full p-2 border border-gray-500 rounded-md text-black'
+                    className={inputClass}
                     value={property.bedrooms}
                     onChange={(e) => setProperty({ ...property, bedrooms: e.target.value })}
                   />
                 </div>
                 <div className='flex-1'>
-                  <label className='block mb-1' htmlFor="bathrooms">Bathrooms</label>
+                  <label className={labelClass} htmlFor="bathrooms">Bathrooms</label>
                   <input
                     id="bathrooms"
                     type="number"
-                    className='w-full p-2 border border-gray-500 rounded-md text-black'
+                    className={inputClass}
                     value={property.bathrooms}
                     onChange={(e) => setProperty({ ...property, bathrooms: e.target.value })}
                   />
@@ -412,14 +390,13 @@ import statesDistricts from '@/data/statesDistricts.json';
               </div>
             </>
           )}
-          {/* Owner Name, Email, Phone - needed for both listing types */}
+
           <div>
-            <label className='block mb-1' htmlFor="ownerName">Your Name
-            </label>
+            <label className={labelClass} htmlFor="ownerName">Your Name</label>
             <input
               id="ownerName"
               type="text"
-              className='w-full p-2 border border-gray-500 rounded-md text-black'
+              className={inputClass}
               placeholder='e.g. Govind Verma'
               value={property.ownerName}
               onChange={(e) => setProperty({ ...property, ownerName: e.target.value })}
@@ -428,22 +405,22 @@ import statesDistricts from '@/data/statesDistricts.json';
 
           <div className='flex gap-4'>
             <div className='flex-1'>
-              <label className='block mb-1' htmlFor="ownerEmail">Email (optional)</label>
+              <label className={labelClass} htmlFor="ownerEmail">Email (optional)</label>
               <input
                 id="ownerEmail"
                 type="email"
-                className='w-full p-2 border border-gray-500 rounded-md text-black'
+                className={inputClass}
                 placeholder='e.g. govind@example.com'
                 value={property.ownerEmail}
                 onChange={(e) => setProperty({ ...property, ownerEmail: e.target.value })}
               />
             </div>
             <div className='flex-1'>
-              <label className='block mb-1' htmlFor="contactPhone">Contact Phone</label>
+              <label className={labelClass} htmlFor="contactPhone">Contact Phone</label>
               <input
                 id="contactPhone"
                 type="tel"
-                className='w-full p-2 border border-gray-500 rounded-md text-black'
+                className={inputClass}
                 placeholder='e.g. 9876543210'
                 value={property.contactPhone}
                 onChange={(e) => setProperty({ ...property, contactPhone: e.target.value })}
@@ -451,9 +428,8 @@ import statesDistricts from '@/data/statesDistricts.json';
             </div>
           </div>
 
-          {/* Image Upload */}
           <div>
-            <label className='block mb-1'>
+            <label className={labelClass}>
               Photos (max {MAX_IMAGES}, each photo under {MAX_IMAGE_SIZE_KB}KB)
             </label>
             <input
@@ -461,13 +437,12 @@ import statesDistricts from '@/data/statesDistricts.json';
               accept="image/*"
               onChange={handleImageUpload}
               disabled={property.images.length >= MAX_IMAGES}
-              className='w-full p-2 border border-gray-500 rounded-md text-black bg-white'
+              className='w-full p-2 border border-gray-500 dark:border-gray-600 rounded-md text-black dark:text-white bg-white dark:bg-slate-700'
             />
             {imageError && (
-              <p className='text-red-600 text-sm mt-1'>{imageError}</p>
+              <p className='text-red-600 dark:text-red-400 text-sm mt-1'>{imageError}</p>
             )}
 
-            {/* Preview thumbnails */}
             {property.images.length > 0 && (
               <div className='flex flex-wrap gap-2 mt-3'>
                 {property.images.map((img, index) => (
@@ -475,7 +450,7 @@ import statesDistricts from '@/data/statesDistricts.json';
                     <img
                       src={img}
                       alt={`Preview ${index + 1}`}
-                      className='w-20 h-20 object-cover rounded-md border border-gray-400'
+                      className='w-20 h-20 object-cover rounded-md border border-gray-400 dark:border-gray-600'
                     />
                     <button
                       type="button"
@@ -498,7 +473,6 @@ import statesDistricts from '@/data/statesDistricts.json';
             {loading ? "Submitting..." : isBuyerRequirement ? "Submit Requirement" : "Submit Property"}
           </button>
 
-          {/* Subscribe button - in case the customer doesn't have a subscription for this district */}
           <button
             type="button"
             onClick={() =>
@@ -506,7 +480,7 @@ import statesDistricts from '@/data/statesDistricts.json';
                 `/subscription/subscribe?state=${encodeURIComponent(property.state)}&district=${encodeURIComponent(property.district)}`
               )
             }
-            className='w-full text-base bg-white border-2 border-orange-600 text-orange-900 font-bold py-2 rounded-md hover:bg-orange-50 transition'
+            className='w-full text-base bg-white dark:bg-slate-700 border-2 border-orange-600 text-orange-900 dark:text-orange-300 font-bold py-2 rounded-md hover:bg-orange-50 dark:hover:bg-slate-600 transition'
           >
             🔓 Subscribe for this District
           </button>

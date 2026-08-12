@@ -86,40 +86,40 @@ export default function SubscriptionsClient({
   };
 
   return (
-    <div className='min-h-screen p-6 bg-slate-100'>
+    <div className='min-h-screen p-6'>
       <div className='max-w-6xl mx-auto'>
-        <h1 className='text-2xl font-bold text-orange-900 mb-6'>
+        <h1 className='text-2xl font-bold text-white drop-shadow-md mb-6'>
           District Subscriptions
         </h1>
 
         <div className='grid grid-cols-1 sm:grid-cols-3 gap-4 mb-6'>
-          <div className='bg-white rounded-lg shadow p-5 text-center border-t-4 border-orange-600'>
-            <p className='text-sm text-gray-500 font-semibold'>Active Monthly</p>
-            <p className='text-3xl font-bold text-orange-900 mt-1'>
+          <div className='bg-white/95 dark:bg-slate-800/95 rounded-2xl shadow-xl p-5 text-center border-t-4 border-orange-600'>
+            <p className='text-sm text-gray-500 dark:text-gray-400 font-semibold'>Active Monthly</p>
+            <p className='text-3xl font-bold text-orange-900 dark:text-orange-300 mt-1'>
               {subscriptions.filter((s) => s.computedStatus === "Active" && s.planType === "Monthly").length}
             </p>
           </div>
-          <div className='bg-white rounded-lg shadow p-5 text-center border-t-4 border-orange-600'>
-            <p className='text-sm text-gray-500 font-semibold'>Active Quarterly</p>
-            <p className='text-3xl font-bold text-orange-900 mt-1'>
+          <div className='bg-white/95 dark:bg-slate-800/95 rounded-2xl shadow-xl p-5 text-center border-t-4 border-orange-600'>
+            <p className='text-sm text-gray-500 dark:text-gray-400 font-semibold'>Active Quarterly</p>
+            <p className='text-3xl font-bold text-orange-900 dark:text-orange-300 mt-1'>
               {subscriptions.filter((s) => s.computedStatus === "Active" && s.planType === "Quarterly").length}
             </p>
           </div>
-          <div className='bg-white rounded-lg shadow p-5 text-center border-t-4 border-orange-600'>
-            <p className='text-sm text-gray-500 font-semibold'>Active Yearly</p>
-            <p className='text-3xl font-bold text-orange-900 mt-1'>
+          <div className='bg-white/95 dark:bg-slate-800/95 rounded-2xl shadow-xl p-5 text-center border-t-4 border-orange-600'>
+            <p className='text-sm text-gray-500 dark:text-gray-400 font-semibold'>Active Yearly</p>
+            <p className='text-3xl font-bold text-orange-900 dark:text-orange-300 mt-1'>
               {subscriptions.filter((s) => s.computedStatus === "Active" && s.planType === "Yearly").length}
             </p>
           </div>
         </div>
 
-        <div className='bg-white rounded-lg shadow p-5 mb-6'>
-          <h2 className='text-lg font-bold text-orange-900 mb-4'>
+        <div className='bg-white/95 dark:bg-slate-800/95 rounded-2xl shadow-xl p-5 mb-6'>
+          <h2 className='text-lg font-bold text-orange-900 dark:text-orange-300 mb-4'>
             Manually Activate a Subscription
           </h2>
           <form onSubmit={handleActivate} className='grid grid-cols-1 md:grid-cols-5 gap-3'>
             <select
-              className='p-2 border border-gray-400 rounded-md text-black'
+              className='p-2 border border-gray-400 dark:border-gray-600 rounded-md text-black dark:text-white dark:bg-slate-700'
               value={selectedUserId}
               onChange={(e) => setSelectedUserId(e.target.value)}
             >
@@ -130,7 +130,7 @@ export default function SubscriptionsClient({
             </select>
 
             <select
-              className='p-2 border border-gray-400 rounded-md text-black'
+              className='p-2 border border-gray-400 dark:border-gray-600 rounded-md text-black dark:text-white dark:bg-slate-700'
               value={state}
               onChange={(e) => setState(e.target.value)}
             >
@@ -141,7 +141,7 @@ export default function SubscriptionsClient({
             </select>
 
             <select
-              className='p-2 border border-gray-400 rounded-md text-black'
+              className='p-2 border border-gray-400 dark:border-gray-600 rounded-md text-black dark:text-white dark:bg-slate-700'
               value={district}
               onChange={(e) => setDistrict(e.target.value)}
               disabled={!state}
@@ -153,7 +153,7 @@ export default function SubscriptionsClient({
             </select>
 
             <select
-              className='p-2 border border-gray-400 rounded-md text-black'
+              className='p-2 border border-gray-400 dark:border-gray-600 rounded-md text-black dark:text-white dark:bg-slate-700'
               value={planType}
               onChange={(e) => setPlanType(e.target.value as "Monthly" | "Quarterly" | "Yearly")}
             >
@@ -172,7 +172,7 @@ export default function SubscriptionsClient({
           </form>
         </div>
 
-        <div className='overflow-x-auto bg-white rounded-lg shadow'>
+        <div className='overflow-x-auto bg-white/95 dark:bg-slate-800/95 rounded-2xl shadow-xl'>
           <table className='w-full text-left text-sm border-collapse'>
             <thead>
               <tr className='bg-orange-800'>
@@ -189,15 +189,15 @@ export default function SubscriptionsClient({
               {subscriptions.map((sub, index) => (
                 <tr
                   key={sub._id}
-                  className={index % 2 === 0 ? "bg-yellow-50" : "bg-white"}
+                  className={index % 2 === 0 ? "bg-yellow-50 dark:bg-slate-700" : "bg-white dark:bg-slate-800"}
                 >
-                  <td className='p-3 text-black border border-gray-300'>
+                  <td className='p-3 text-black dark:text-gray-100 border border-gray-300 dark:border-gray-600'>
                     {sub.user ? `${sub.user.username} (${sub.user.email})` : "Deleted User"}
                   </td>
-                  <td className='p-3 text-black border border-gray-300'>{sub.state}</td>
-                  <td className='p-3 text-black border border-gray-300'>{sub.district}</td>
-                  <td className='p-3 text-black border border-gray-300'>{sub.planType}</td>
-                  <td className='p-3 border border-gray-300'>
+                  <td className='p-3 text-black dark:text-gray-100 border border-gray-300 dark:border-gray-600'>{sub.state}</td>
+                  <td className='p-3 text-black dark:text-gray-100 border border-gray-300 dark:border-gray-600'>{sub.district}</td>
+                  <td className='p-3 text-black dark:text-gray-100 border border-gray-300 dark:border-gray-600'>{sub.planType}</td>
+                  <td className='p-3 border border-gray-300 dark:border-gray-600'>
                     {sub.computedStatus === "Active" && (
                       <span className='text-white font-bold bg-green-600 px-2 py-1 rounded'>Active</span>
                     )}
@@ -208,8 +208,8 @@ export default function SubscriptionsClient({
                       <span className='text-white font-bold bg-gray-600 px-2 py-1 rounded'>Cancelled</span>
                     )}
                   </td>
-                  <td className='p-3 text-black border border-gray-300'>{formatDate(sub.endDate)}</td>
-                  <td className='p-3 text-black border border-gray-300'>
+                  <td className='p-3 text-black dark:text-gray-100 border border-gray-300 dark:border-gray-600'>{formatDate(sub.endDate)}</td>
+                  <td className='p-3 text-black dark:text-gray-100 border border-gray-300 dark:border-gray-600'>
                     {sub.propertiesAddedCount} / {sub.propertyLimit}
                   </td>
                 </tr>
@@ -219,7 +219,9 @@ export default function SubscriptionsClient({
         </div>
 
         {subscriptions.length === 0 && (
-          <p className='text-center text-gray-500 mt-6'>No subscriptions found</p>
+          <div className='bg-white/95 dark:bg-slate-800/95 rounded-2xl shadow-xl p-6 text-center mt-6'>
+            <p className='text-gray-500 dark:text-gray-400'>No subscriptions found</p>
+          </div>
         )}
       </div>
     </div>

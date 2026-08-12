@@ -1,5 +1,5 @@
 import Link from "next/link";
-import Image from "next/image";
+import HeroSlideshow from "@/components/HeroSlideshow";
 
 export default function Home() {
   return (
@@ -12,39 +12,34 @@ export default function Home() {
         or disputes between users.
       </div>
 
-      {/* ===== Hero Section ===== */}
-      
-      <section className="relative h-[80vh] min-h-[500px] flex items-center justify-center text-center overflow-hidden">
-        <div
-          className="absolute inset-0 bg-cover bg-center"
-          style={{ backgroundImage: "url('/images/hero-bg.jpg')" }}
-        />
-        <div className="absolute inset-0 bg-black/50" />
+     {/* ===== Hero Section ===== */}
 
-        <div className="relative z-10 px-4 max-w-3xl">
-          <h1 className="text-3xl sm:text-5xl font-extrabold text-white mb-4 leading-tight">
-            Find Your Perfect Property, Anywhere in India
-          </h1>
-          <p className="text-white/90 text-base sm:text-lg mb-8">
-            Buy, sell, or rent land, houses, and shops — directly connect with owners across every state and district.
-          </p>
+<section className="relative h-[80vh] min-h-[500px] flex items-center justify-center text-center overflow-hidden">
 
-          <div className="flex flex-col sm:flex-row gap-4 justify-center">
-            <Link
-              href="/property"
-              className="bg-orange-600 hover:bg-orange-700 text-black font-bold px-8 py-3 rounded-md transition text-lg"
-            >
-              Browse Properties
-            </Link>
-            <Link
-              href="/property/add"
-              className="bg-white hover:bg-gray-100 text-orange-900 font-bold px-8 py-3 rounded-md transition text-lg border-2 border-white"
-            >
-              List Your Property
-            </Link>
-          </div>
-        </div>
-      </section>
+  <div className="relative z-10 px-4 max-w-3xl">
+    <h1 className="text-3xl sm:text-5xl font-extrabold text-white mb-4 leading-tight">
+      Find Your Perfect Property, Anywhere in India
+    </h1>
+    <p className="text-white/90 text-base sm:text-lg mb-8">
+      Buy, sell, or rent land, houses, and shops — directly connect with owners across every state and district.
+    </p>
+
+    <div className="flex flex-col sm:flex-row gap-4 justify-center">
+      <Link
+        href="/property"
+        className="bg-orange-600 hover:bg-orange-700 text-black font-bold px-8 py-3 rounded-md transition text-lg"
+      >
+        Browse Properties
+      </Link>
+      <Link
+        href="/property/add"
+        className="bg-white hover:bg-gray-100 text-orange-900 font-bold px-8 py-3 rounded-md transition text-lg border-2 border-white"
+      >
+        List Your Property
+      </Link>
+    </div>
+  </div>
+</section>
 
       {/* ===== Trust / Features Strip ===== */}
       <section className="bg-orange-900 text-white py-6">
