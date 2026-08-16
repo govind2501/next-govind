@@ -164,7 +164,7 @@ export default function Home() {
       <section className="bg-orange-600 py-12 text-center">
         <div className="max-w-2xl mx-auto px-4">
           <h2 className="text-2xl sm:text-3xl font-bold text-black mb-4">
-            Ready to find your next property?
+            Ready to find your next property ?
           </h2>
           <p className="text-black/80 mb-6">
             Join thousands of buyers and sellers already using next-govind
