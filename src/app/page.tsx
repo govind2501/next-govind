@@ -3,7 +3,7 @@ import HeroSlideshow from "@/components/HeroSlideshow";
 
 export default function Home() {
   return (
-    <div className="bg-slate-50">
+    <div>
 
       {/* ===== Disclaimer Banner ===== */}
       <div className="bg-yellow-100 border-b border-yellow-300 text-yellow-900 text-xs sm:text-sm text-center py-2 px-4">
@@ -65,7 +65,7 @@ export default function Home() {
 
       {/* ===== Property Types Showcase ===== */}
       <section className="max-w-6xl mx-auto px-4 py-16">
-        <h2 className="text-2xl sm:text-3xl font-bold text-orange-900 text-center mb-2">
+        <h2 className="text-2xl sm:text-3xl font-bold text-orange-950 bg-amber-100 text-center mb-2">
           Explore by Property Type
         </h2>
         <p className="text-gray-600 text-center mb-10">
@@ -83,6 +83,7 @@ export default function Home() {
               <h3 className="text-white text-xl font-bold">Land / Plots</h3>
             </div>
           </div>
+          
 
           <div className="relative rounded-lg overflow-hidden shadow-md h-64 group">
             <img

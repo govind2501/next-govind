@@ -15,8 +15,23 @@ export function proxy(request: NextRequest) {
   if (!isPublicPath && !token) {
     return NextResponse.redirect(new URL("/login", request.nextUrl));
   }
-  }
 
-  export const config = {
-  matcher: ["/", "/login", "/signup", "/dashboard", "/admin/properties"],
+  return NextResponse.next();
+}
+
+export const config = {
+  matcher: [
+    "/",
+    "/login",
+    "/signup",
+    "/dashboard",
+    "/admin/properties",
+    "/admin/subscriptions",
+    "/admin/analytics",
+    "/property/add",
+    "/api/users/me",
+    "/api/users/logout",
+    "/api/tracking/start",
+    "/api/tracking/heartbeat",
+  ],
 };
