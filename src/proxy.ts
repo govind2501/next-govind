@@ -3,16 +3,22 @@ import { NextResponse, NextRequest } from "next/server";
 export function proxy(request: NextRequest) {
   const path = request.nextUrl.pathname;
 
-  const isPublicPath = path === "/login" || path === "/signup";
+  // Only these pages actually require the user to be logged in
+  const isProtectedPath =
+    path === "/dashboard" ||
+    path === "/property/add" ||
+    path.startsWith("/admin");
+
+  const isAuthPath = path === "/login" || path === "/signup";
   const token = request.cookies.get("token")?.value || "";
 
-  // logged in user trying to visit login/signup -> send to dashboard
-  if (isPublicPath && token) {
+  // Logged in user trying to visit login/signup -> send to dashboard
+  if (isAuthPath && token) {
     return NextResponse.redirect(new URL("/dashboard", request.nextUrl));
   }
 
-  // no token, trying to visit protected page -> send to login
-  if (!isPublicPath && !token) {
+  // No token, trying to visit a protected page -> send to login
+  if (isProtectedPath && !token) {
     return NextResponse.redirect(new URL("/login", request.nextUrl));
   }
 
@@ -25,10 +31,13 @@ export const config = {
     "/login",
     "/signup",
     "/dashboard",
+    "/property",
+    "/property/add",
+    "/about",
+    "/contact",
     "/admin/properties",
     "/admin/subscriptions",
     "/admin/analytics",
-    "/property/add",
     "/api/users/me",
     "/api/users/logout",
     "/api/tracking/start",

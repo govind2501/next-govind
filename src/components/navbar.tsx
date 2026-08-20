@@ -72,50 +72,43 @@ export default function Navbar() {
               Contact
             </Link>
 
-            {!loading && user && (
+            <Link href="/property/add" className='hover:text-orange-300'>
+              Add Property
+            </Link>
+
+            <Link href="/dashboard" className='hover:text-orange-300'>
+              Dashboard
+            </Link>
+
+            {/* Admin links - only show when the logged-in user is an Admin */}
+            {!loading && user && user.isAdmin && (
               <>
-                <Link href="/property/add" className='hover:text-orange-300'>
-                  Add Property
+                <Link href="/admin/properties" className='hover:text-orange-300 font-semibold text-yellow-300'>
+                  Admin
                 </Link>
-
-                <Link href="/dashboard" className='hover:text-orange-300'>
-                  Dashboard
+                <Link href="/admin/subscriptions" className='hover:text-orange-300 font-semibold text-yellow-300'>
+                  Subscriptions
                 </Link>
-
-                {/* Admin links - only show when the user is an Admin */}
-                {user.isAdmin && (
-                  <>
-                    <Link href="/admin/properties" className='hover:text-orange-300 font-semibold text-yellow-300'>
-                      Admin
-                    </Link>
-                    <Link href="/admin/subscriptions" className='hover:text-orange-300 font-semibold text-yellow-300'>
-                      Subscriptions
-                    </Link>
-                    <Link href="/admin/analytics" className='hover:text-orange-300 font-semibold text-yellow-300'>
-                      Analytics
-                    </Link>
-                  </>
-                )}
+                <Link href="/admin/analytics" className='hover:text-orange-300 font-semibold text-yellow-300'>
+                  Analytics
+                </Link>
               </>
             )}
 
-            {!loading && !user && (
-              <>
-                <Link href="/login" className='hover:text-orange-300'>
-                  Login
-                </Link>
-                <Link
-                  href="/signup"
-                  className='bg-orange-600 px-2 py-1 rounded-md font-bold text-black hover:bg-orange-700 shrink-0'
-                >
-                  Signup
-                </Link>
-              </>
-            )}
+            {/* Login and Signup - always visible */}
+            <Link href="/login" className='hover:text-orange-300'>
+              Login
+            </Link>
+            <Link
+              href="/signup"
+              className='bg-orange-600 px-2 py-1 rounded-md font-bold text-black hover:bg-orange-700 shrink-0'
+            >
+              Signup
+            </Link>
 
           </div>
 
-          {/* Logout button - always in the far right corner, separate from the scrolling links */}
+          {/* Logout button - only shown when a user is actually logged in */}
           {!loading && user && (
             <button
               onClick={handleLogout}
