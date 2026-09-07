@@ -6,7 +6,6 @@ import { useSearchParams, useRouter } from 'next/navigation';
 import { toast } from 'react-hot-toast';
 import statesDistricts from '@/data/statesDistricts.json';
 
-// Fixed prices - same as backend, only for showing on screen
 const PLAN_PRICES = {
   Monthly: 299,
   Quarterly: 599,
@@ -19,8 +18,6 @@ const PLAN_LABELS = {
   Yearly: "1 Year",
 };
 
-// Razorpay injects this on `window` once the checkout.js script (loaded in
-// layout.tsx) has finished loading
 declare global {
   interface Window {
     Razorpay: any;
@@ -59,18 +56,15 @@ function SubscribeForm() {
     setStep("checkout");
   };
 
-  // Opens the real Razorpay payment popup
   const handlePayment = async () => {
     try {
       setLoading(true);
 
-      // 1. Ask our backend to create a Razorpay order for this amount
       const orderResponse = await axios.post("/api/payment/create-order", {
         amount: price,
       });
       const order = orderResponse.data;
 
-      // 2. Configure and open the Razorpay Checkout popup
       const options = {
         key: process.env.NEXT_PUBLIC_RAZORPAY_KEY_ID,
         amount: order.amount,
@@ -79,7 +73,6 @@ function SubscribeForm() {
         description: `District Subscription — ${PLAN_LABELS[planType]} (${district}, ${state})`,
         order_id: order.id,
         handler: async function (response: any) {
-          // 3. Payment succeeded on Razorpay's side - now activate the subscription
           try {
             const subResponse = await axios.post("/api/subscription/subscribe", {
               state,
@@ -96,7 +89,7 @@ function SubscribeForm() {
           }
         },
         theme: {
-          color: "#c2410c", // matches the site's orange-600 brand color
+          color: "#c2410c",
         },
       };
 
