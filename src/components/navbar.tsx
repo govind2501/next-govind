@@ -99,7 +99,7 @@ export default function Navbar() {
 
             {/* Login and Signup - always visible */}
             <Link href="/login" className='hover:text-orange-300'>
-              Login Page
+              Login
             </Link>
             <Link
               href="/signup"
