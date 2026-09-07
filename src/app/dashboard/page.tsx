@@ -1,40 +1,39 @@
 'use client'
 
-import React, { useEffect, useState } from 'react';
+import React from 'react';
 import axios from 'axios';
+import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { toast } from 'react-hot-toast';
-import { useRouter } from 'next/navigation';  
+import { useRouter } from 'next/navigation';
+
+// Same fetch function as Navbar - since the queryKey ("user") matches,
+// React Query treats this as the exact same data, no duplicate API call
+const fetchUser = async () => {
+  const response = await axios.get('/api/users/me');
+  return response.data.data;
+};
 
 export default function DashboardPage() {
   const router = useRouter();
-  const [user, setUser] = useState<any>(null);
-  const [loading, setLoading] = useState(true);
+  const queryClient = useQueryClient();
+
+  const { data: user, isLoading: loading } = useQuery({
+    queryKey: ["user"],
+    queryFn: fetchUser,
+    retry: false,
+  });
 
   const logout = async () => {
     try {
       await axios.get('/api/users/logout');
       toast.success('Logout successful');
+      // Clears the shared "user" cache - Navbar updates instantly too
+      queryClient.setQueryData(["user"], null);
       router.push('/login');
     } catch (error: any) {
       toast.error(error.message);
     }
   };
-
-  const getUserDetails = async () => {
-    try {
-      const response = await axios.get('/api/users/me');
-      setUser(response.data.data);
-    } catch (error: any) {
-      toast.error("Unable to load user data");
-      console.log(error.message);
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  useEffect(() => {
-    getUserDetails();
-  }, []);
 
   if (loading) {
     return (

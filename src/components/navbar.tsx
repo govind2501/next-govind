@@ -1,38 +1,40 @@
 'use client'
 
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import Link from 'next/link';
 import axios from 'axios';
+import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { useRouter } from 'next/navigation';
 import { toast } from 'react-hot-toast';
 import ThemeToggle from './ThemeToggle';
 
+// This function does the actual fetching - React Query calls it for us
+const fetchUser = async () => {
+  const response = await axios.get("/api/users/me");
+  return response.data.data;
+};
+
 export default function Navbar() {
   const router = useRouter();
-  const [loading, setLoading] = useState(true);
-  const [user, setUser] = useState<any>(null); // null = logged out
+  const queryClient = useQueryClient();
   const [searchQuery, setSearchQuery] = useState('');
 
-  const fetchUser = async () => {
-    try {
-      const response = await axios.get("/api/users/me");
-      setUser(response.data.data);
-    } catch (error) {
-      setUser(null); // no token, or it's invalid
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  useEffect(() => {
-    fetchUser();
-  }, []);
+  // React Query handles loading, caching, and error state automatically.
+  // "user" key means: if any other component asks for this same data,
+  // it gets the cached result instead of firing a new request.
+  const { data: user, isLoading: loading } = useQuery({
+    queryKey: ["user"],
+    queryFn: fetchUser,
+    retry: false, // don't retry if not logged in (401) - that's an expected case, not a network error
+  });
 
   const handleLogout = async () => {
     try {
       await axios.get("/api/users/logout");
       toast.success("Logged out successfully");
-      setUser(null);
+      // Tell React Query the "user" data is now stale/gone, so every
+      // component using it (Navbar, Dashboard, etc.) refreshes immediately
+      queryClient.setQueryData(["user"], null);
       router.push("/login");
     } catch (error: any) {
       toast.error("Error while logging out");

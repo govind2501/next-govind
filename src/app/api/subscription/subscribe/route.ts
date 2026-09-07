@@ -2,6 +2,7 @@ import { connect } from "@/dbConfig/dbConfig";
 import Subscription from "@/models/Subscriptionmodels";
 import { getDataFromToken } from "@/helpers/getDataFromToken";
 import { NextRequest, NextResponse } from "next/server";
+import crypto from "crypto";
 
 connect();
 
@@ -19,11 +20,25 @@ export async function POST(request: NextRequest) {
 
     // Step 2: Read request body
     const reqBody = await request.json();
-    const { state, district, planType } = reqBody;
+    const {
+      state,
+      district,
+      planType,
+      razorpay_payment_id,
+      razorpay_order_id,
+      razorpay_signature,
+    } = reqBody;
 
     if (!state || !district || !planType) {
       return NextResponse.json(
         { error: "State, District and Plan Type are all required" },
+        { status: 400 }
+      );
+    }
+
+    if (!razorpay_payment_id || !razorpay_order_id || !razorpay_signature) {
+      return NextResponse.json(
+        { error: "Payment details are missing" },
         { status: 400 }
       );
     }
@@ -37,8 +52,22 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // Step 3: FAKE PAYMENT - treating it as an immediate success for now
-    // (Real Razorpay/PhonePe payment verification will go here later)
+    // Step 3: Verify the payment is genuinely from Razorpay by re-computing
+    // the signature ourselves and comparing it. This is what stops anyone
+    // from calling this API directly and getting a free subscription.
+    const bodyToSign = `${razorpay_order_id}|${razorpay_payment_id}`;
+    const expectedSignature = crypto
+      .createHmac("sha256", process.env.RAZORPAY_KEY_SECRET!)
+      .update(bodyToSign)
+      .digest("hex");
+
+    if (expectedSignature !== razorpay_signature) {
+      return NextResponse.json(
+        { error: "Payment verification failed. Please contact support." },
+        { status: 400 }
+      );
+    }
+
     const amount = config.amount;
 
     // Step 4: Calculate subscription end date
@@ -58,7 +87,7 @@ export async function POST(request: NextRequest) {
       status: "Active",
       propertyLimit: config.propertyLimit,
       propertiesAddedCount: 0,
-      paymentReference: "DEMO_PAYMENT_" + Date.now(), // fake reference for now
+      paymentReference: razorpay_payment_id,
     });
 
     await newSubscription.save();

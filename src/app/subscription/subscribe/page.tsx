@@ -19,12 +19,18 @@ const PLAN_LABELS = {
   Yearly: "1 Year",
 };
 
+// Razorpay injects this on `window` once the checkout.js script (loaded in
+// layout.tsx) has finished loading
+declare global {
+  interface Window {
+    Razorpay: any;
+  }
+}
+
 function SubscribeForm() {
   const router = useRouter();
   const searchParams = useSearchParams();
 
-  // If "state" and "district" arrived in the URL from the Property Detail page,
-  // pre-select them
   const initialState = searchParams.get("state") || "";
   const initialDistrict = searchParams.get("district") || "";
 
@@ -37,7 +43,6 @@ function SubscribeForm() {
 
   const allStates = Object.keys(statesDistricts);
 
-  // Update the district list whenever the state changes
   useEffect(() => {
     if (state && (statesDistricts as any)[state]) {
       setDistrictList((statesDistricts as any)[state]);
@@ -46,7 +51,6 @@ function SubscribeForm() {
     }
   }, [state]);
 
-  // "Add to Cart" - just validates the selection and moves to the checkout step
   const handleAddToCart = () => {
     if (!state || !district) {
       toast.error("Please select both State and District");
@@ -55,22 +59,51 @@ function SubscribeForm() {
     setStep("checkout");
   };
 
+  // Opens the real Razorpay payment popup
   const handlePayment = async () => {
     try {
       setLoading(true);
 
-      // A real Razorpay/Payment Gateway will go here in the future.
-      // For now, calling the "subscribe" API directly, as if payment succeeded.
-      const response = await axios.post("/api/subscription/subscribe", {
-        state,
-        district,
-        planType,
+      // 1. Ask our backend to create a Razorpay order for this amount
+      const orderResponse = await axios.post("/api/payment/create-order", {
+        amount: price,
       });
+      const order = orderResponse.data;
 
-      toast.success(response.data.message || "Subscription activated!");
-      router.push("/property");
+      // 2. Configure and open the Razorpay Checkout popup
+      const options = {
+        key: process.env.NEXT_PUBLIC_RAZORPAY_KEY_ID,
+        amount: order.amount,
+        currency: order.currency,
+        name: "Trade My Property",
+        description: `District Subscription — ${PLAN_LABELS[planType]} (${district}, ${state})`,
+        order_id: order.id,
+        handler: async function (response: any) {
+          // 3. Payment succeeded on Razorpay's side - now activate the subscription
+          try {
+            const subResponse = await axios.post("/api/subscription/subscribe", {
+              state,
+              district,
+              planType,
+              razorpay_payment_id: response.razorpay_payment_id,
+              razorpay_order_id: response.razorpay_order_id,
+              razorpay_signature: response.razorpay_signature,
+            });
+            toast.success(subResponse.data.message || "Subscription activated!");
+            router.push("/property");
+          } catch (error: any) {
+            toast.error(error.response?.data?.error || "Payment succeeded but activation failed. Please contact support.");
+          }
+        },
+        theme: {
+          color: "#c2410c", // matches the site's orange-600 brand color
+        },
+      };
+
+      const razorpayInstance = new window.Razorpay(options);
+      razorpayInstance.open();
     } catch (error: any) {
-      toast.error(error.response?.data?.error || "Subscription failed");
+      toast.error(error.response?.data?.error || "Could not start payment");
     } finally {
       setLoading(false);
     }
@@ -93,7 +126,6 @@ function SubscribeForm() {
               property/requirement in the same district.
             </p>
 
-            {/* State Selection */}
             <div className='mb-4'>
               <label className='block mb-1 font-semibold text-orange-900 dark:text-orange-300'>State</label>
               <select
@@ -108,7 +140,6 @@ function SubscribeForm() {
               </select>
             </div>
 
-            {/* District Selection */}
             <div className='mb-4'>
               <label className='block mb-1 font-semibold text-orange-900 dark:text-orange-300'>District</label>
               <select
@@ -126,7 +157,6 @@ function SubscribeForm() {
               </select>
             </div>
 
-            {/* Plan Selection - like choosing a product variant */}
             <div className='mb-6'>
               <label className='block mb-2 font-semibold text-orange-900 dark:text-orange-300'>Choose Plan</label>
               <div className='flex flex-col gap-2'>
@@ -148,7 +178,6 @@ function SubscribeForm() {
               </div>
             </div>
 
-            {/* Add to Cart button - moves to the checkout summary */}
             <button
               onClick={handleAddToCart}
               className='w-full bg-orange-600 text-black font-bold py-3 rounded-md hover:bg-orange-700 transition'
@@ -167,7 +196,6 @@ function SubscribeForm() {
               Review your order before payment
             </p>
 
-            {/* Cart summary - product/service, price shown clearly */}
             <div className='border border-gray-300 dark:border-gray-600 rounded-lg p-4 mb-4'>
               <div className='flex justify-between items-start mb-3 pb-3 border-b border-gray-200 dark:border-gray-600'>
                 <div>
@@ -207,7 +235,6 @@ function SubscribeForm() {
               ← Edit selection
             </button>
 
-            {/* Proceed to Pay - the actual checkout action */}
             <button
               onClick={handlePayment}
               disabled={loading}
@@ -217,7 +244,7 @@ function SubscribeForm() {
             </button>
 
             <p className='text-xs text-gray-500 dark:text-gray-400 text-center mt-3'>
-              ⚠️ This is a demo payment, no real money will be charged.
+              🔒 Secured by Razorpay
             </p>
           </>
         )}
@@ -227,7 +254,6 @@ function SubscribeForm() {
   );
 }
 
-// Suspense wrapper is required because useSearchParams is a client-side hook
 export default function SubscribePage() {
   return (
     <Suspense fallback={<p className='text-center mt-10'>Loading...</p>}>

@@ -1,11 +1,13 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
+import Script from "next/script";
 import "./globals.css";
 import { Toaster } from "react-hot-toast";
 import Navbar from "../components/navbar"
 import VisitTracker from "@/components/VisitTracker";
 import Footer from "@/components/Footer";
 import HeroSlideshow from "@/components/HeroSlideshow";
+import QueryProvider from "@/components/QueryProvider";
 
 const geistMono = Geist_Mono({
   variable: "--font-geist-mono",
@@ -34,17 +36,22 @@ export default function RootLayout({
           <div className="absolute inset-0 bg-black/50" />
         </div>
 
-        <Navbar />
+        {/* Razorpay Checkout script - needed on any page that can open the payment popup */}
+        <Script src="https://checkout.razorpay.com/v1/checkout.js" strategy="lazyOnload" />
 
-        <Toaster />
+        <QueryProvider>
+          <Navbar />
 
-        <VisitTracker />
+          <Toaster />
 
-       <main className="flex-1 pt-[130px] sm:pt-[110px] pb-[88px]">
-  {children}
-</main>
+          <VisitTracker />
 
-        <Footer />
+          <main className="flex-1 pt-[130px] sm:pt-[110px] pb-[88px]">
+            {children}
+          </main>
+
+          <Footer />
+        </QueryProvider>
 
       </body>
 

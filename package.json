@@ -2,15 +2,14 @@
   "name": "trade-my-property",
   "version": "0.1.0",
   "private": true,
-  "scripts":
-  {
-
-  "dev": "next dev",
+  "scripts": {
+    "dev": "next dev",
     "build": "next build",
     "start": "next start",
     "lint": "eslint"
   },
   "dependencies": {
+    "@tanstack/react-query": "^5.102.8",
     "axios": "^1.18.1",
     "bcryptjs": "^3.0.3",
     "jsonwebtoken": "^9.0.3",
@@ -20,6 +19,7 @@
     "next": "^16.2.10",
     "next-auth": "^1.12.1",
     "nodemailer": "^9.0.3",
+    "razorpay": "^2.9.8",
     "react": "^19.2.7",
     "react-dom": "^19.2.7",
     "react-hot-toast": "^2.6.0",
