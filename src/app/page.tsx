@@ -160,7 +160,7 @@ export default function Home() {
         </div>
       </section>
 
-      {/* ===== Call To Action tmp ===== */}
+      {/* ===== Call To Action ===== */}
       <section className="bg-orange-600 py-12 text-center">
         <div className="max-w-2xl mx-auto px-4">
           <h2 className="text-2xl sm:text-3xl font-bold text-black mb-4">
