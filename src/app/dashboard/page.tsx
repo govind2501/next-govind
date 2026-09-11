@@ -6,7 +6,7 @@ import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { toast } from 'react-hot-toast';
 import { useRouter } from 'next/navigation';
 
-// Same fetch function as Navbar - since the queryKey ("user") matches,
+// Same fetch function as Navbar - since the queryKey ("users") matches,
 // React Query treats this as the exact same data, no duplicate API call
 const fetchUser = async () => {
   const response = await axios.get('/api/users/me');
