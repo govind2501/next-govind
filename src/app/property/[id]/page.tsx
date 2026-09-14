@@ -5,8 +5,6 @@ import Subscription from "@/models/Subscriptionmodels";
 import { getServerUser } from "@/helpers/getServerUser";
 import PropertyDetailClient from "./PropertyDetailClient";
 
-// This function runs before the page renders and sets the <title>,
-// meta description, and social-share preview for this specific property
 export async function generateMetadata({
   params,
 }: {
@@ -26,7 +24,6 @@ export async function generateMetadata({
 
   const isBuyer = property.listingType === "BuyerRequirement";
 
-  // Build a title like "3 BHK House for Sale in Lucknow — Trade My Property"
   const action = isBuyer
     ? (property.transactionType === "Rent" ? "Wanted for Rent" : "Wanted to Buy")
     : (property.transactionType === "Rent" ? "for Rent" : "for Sale");
@@ -59,8 +56,17 @@ export default async function PropertyDetailPage({
   await connect();
 
   const property = await Property.findById(id);
+  const currentUser = await getServerUser();
 
-  if (!property || property.status !== "Approved") {
+  const isOwner = !!(
+    property &&
+    currentUser &&
+    String(currentUser._id) === String(property.owner)
+  );
+
+  const isAdminUser = !!(currentUser && currentUser.isAdmin);
+
+  if (!property || (property.status !== "Approved" && !isOwner && !isAdminUser)) {
     return (
       <div className='min-h-screen flex items-center justify-center'>
         <div className='bg-white/95 dark:bg-slate-800/95 rounded-2xl shadow-xl p-6'>
@@ -70,11 +76,10 @@ export default async function PropertyDetailPage({
     );
   }
 
-  const currentUser = await getServerUser();
   let hasAccess = false;
 
   if (currentUser) {
-    if (currentUser.isAdmin) {
+    if (currentUser.isAdmin || isOwner) {
       hasAccess = true;
     } else {
       const activeSubscription = await Subscription.findOne({
@@ -97,5 +102,11 @@ export default async function PropertyDetailPage({
     propertyData.ownerEmail = null;
   }
 
-  return <PropertyDetailClient property={propertyData} hasAccess={hasAccess} />;
+  return (
+    <PropertyDetailClient
+      property={propertyData}
+      hasAccess={hasAccess}
+      isOwner={isOwner}
+    />
+  );
 }

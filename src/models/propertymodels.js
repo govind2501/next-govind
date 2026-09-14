@@ -6,17 +6,16 @@ const propertySchema = new mongoose.Schema({
     type: String,
     trim: true,
     required: function () {
-      return this.listingType === "Sell"; // required only for Sell listings
+      return this.listingType === "Sell";
     },
   },
   description: {
     type: String,
     required: function () {
-      return this.listingType === "Sell"; // required only for Sell listings
+      return this.listingType === "Sell";
     },
   },
 
-  // Listing Type: Seller posting a property / Buyer posting a requirement
   listingType: {
     type: String,
     enum: ["Sell", "BuyerRequirement"],
@@ -24,21 +23,18 @@ const propertySchema = new mongoose.Schema({
     default: "Sell",
   },
 
-  // Property Type: Jamin / Makan / Dukan
   propertyType: {
     type: String,
     enum: ["Land", "House", "Shop"],
     required: true,
   },
 
-  // Transaction Type: Sell / Rent
   transactionType: {
     type: String,
     enum: ["Sell", "Rent"],
     required: true,
   },
 
-  // Price (used as Budget for BuyerRequirement)
   price: {
     type: Number,
     required: [true, "Please provide a price"],
@@ -49,7 +45,6 @@ const propertySchema = new mongoose.Schema({
     default: "Total",
   },
 
-  // Location - State & District
   state: {
     type: String,
     required: [true, "Please select a state"],
@@ -70,9 +65,8 @@ const propertySchema = new mongoose.Schema({
     type: String,
   },
 
-  // Property Details
   area: {
-    type: Number, // in sqft
+    type: Number,
   },
   bedrooms: {
     type: Number,
@@ -90,14 +84,18 @@ const propertySchema = new mongoose.Schema({
     },
   ],
 
-  // Owner Reference (jisne listing daali)
+  // Video (Cloudinary hosted URL)
+  video: {
+    type: String,
+    default: "",
+  },
+
   owner: {
     type: mongoose.Schema.Types.ObjectId,
     ref: "users",
     required: true,
   },
 
-    // Contact Info (quick access ke liye)
   ownerName: {
     type: String,
     trim: true,
@@ -113,7 +111,6 @@ const propertySchema = new mongoose.Schema({
     required: [true, "Please provide contact phone"],
   },
 
-  // Admin Approval Workflow
   status: {
     type: String,
     enum: ["Pending", "Approved", "Rejected"],
@@ -123,7 +120,6 @@ const propertySchema = new mongoose.Schema({
     type: String,
   },
 
-  // Extra useful fields
   isFeatured: {
     type: Boolean,
     default: false,

@@ -6,16 +6,17 @@ import { useRouter } from 'next/navigation';
 export default function PropertyDetailClient({
   property,
   hasAccess,
+  isOwner,
 }: {
   property: any;
   hasAccess: boolean;
+  isOwner: boolean;
 }) {
   const router = useRouter();
   const [selectedImage, setSelectedImage] = useState(0);
 
   const isBuyer = property.listingType === "BuyerRequirement";
 
-  // Builds a WhatsApp share link with the property title, price, and page URL
   const handleWhatsAppShare = () => {
     const priceText = `₹${Number(property.price).toLocaleString('en-IN')}${
       property.priceUnit === "PerMonth" ? " /month" : property.priceUnit === "PerSqft" ? " /sqft" : ""
@@ -30,7 +31,12 @@ export default function PropertyDetailClient({
     <div className='min-h-screen px-3 sm:px-4 py-6 sm:py-8'>
       <div className='max-w-3xl mx-auto bg-white/95 dark:bg-slate-800/95 rounded-2xl shadow-xl overflow-hidden'>
 
-        {/* Image Gallery */}
+        {isOwner && property.status === "Pending" && (
+          <div className='bg-yellow-100 dark:bg-yellow-900 text-yellow-900 dark:text-yellow-200 text-center text-sm font-semibold py-2 px-3'>
+            ⏳ This listing is pending admin re-approval after your recent edit.
+          </div>
+        )}
+
         <div className='h-56 sm:h-72 bg-gray-300 dark:bg-gray-600 flex items-center justify-center'>
           {property.images && property.images.length > 0 ? (
             <img
@@ -43,7 +49,6 @@ export default function PropertyDetailClient({
           )}
         </div>
 
-        {/* Thumbnail strip - only shows when there is more than 1 photo */}
         {property.images && property.images.length > 1 && (
           <div className='flex gap-2 p-3 overflow-x-auto bg-gray-100 dark:bg-slate-700'>
             {property.images.map((img: string, index: number) => (
@@ -60,8 +65,17 @@ export default function PropertyDetailClient({
           </div>
         )}
 
+        {property.video && (
+          <div className='p-3 bg-gray-100 dark:bg-slate-700'>
+            <video
+              src={property.video}
+              controls
+              className='w-full rounded-md max-h-72'
+            />
+          </div>
+        )}
+
         <div className='p-4 sm:p-6'>
-          {/* Title & Price */}
           <div className='flex justify-between items-start flex-wrap gap-2'>
             <h1 className='text-xl sm:text-2xl font-bold text-orange-900 dark:text-orange-300'>{property.title}</h1>
             <span className='text-xl sm:text-2xl font-bold text-green-700 dark:text-green-400'>
@@ -71,11 +85,19 @@ export default function PropertyDetailClient({
             </span>
           </div>
 
+          {isOwner && (
+            <button
+              onClick={() => router.push(`/property/${property._id}/edit`)}
+              className='mt-2 text-sm bg-blue-600 text-white font-semibold px-4 py-1.5 rounded-full hover:bg-blue-700 transition'
+            >
+              ✏️ Edit Property
+            </button>
+          )}
+
           <p className='text-gray-600 dark:text-gray-300 mt-1'>
             {property.city ? `${property.city}, ` : ""}{property.district}, {property.state}
           </p>
 
-          {/* Tags + WhatsApp Share button */}
           <div className='flex justify-between items-center flex-wrap gap-3 mt-3'>
             <div className='flex gap-3'>
               <span className='text-sm bg-orange-200 dark:bg-orange-900 text-orange-900 dark:text-orange-200 px-3 py-1 rounded-full font-semibold'>
@@ -97,13 +119,11 @@ export default function PropertyDetailClient({
             </button>
           </div>
 
-          {/* Description */}
           <div className='mt-5'>
             <h2 className='text-lg font-bold text-orange-900 dark:text-orange-300 mb-1'>Description</h2>
             <p className='text-gray-700 dark:text-gray-200'>{property.description}</p>
           </div>
 
-          {/* Details Grid */}
           <div className='grid grid-cols-2 sm:grid-cols-3 gap-4 mt-5 text-gray-700 dark:text-gray-200'>
             {property.area ? (
               <div><span className='font-semibold'>Area:</span> {property.area} sqft</div>
@@ -116,7 +136,6 @@ export default function PropertyDetailClient({
             ) : null}
           </div>
 
-          {/* Contact Details Section - locked or unlocked based on subscription */}
           <div className='mt-6 border-t border-gray-300 dark:border-gray-600 pt-4'>
             <h2 className='text-lg font-bold text-orange-900 dark:text-orange-300 mb-2'>Contact Details</h2>
 
