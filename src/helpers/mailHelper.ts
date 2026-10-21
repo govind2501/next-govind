@@ -25,7 +25,7 @@ export const sendEmail = async ({
         // If a custom subject/html is passed (e.g. for feedback emails), use that.
         // Otherwise fall back to the existing VERIFY / Reset Password behavior.
         const mailOptions = {
-            from: process.env.MAIL_USER,
+            from: `"Trade My Property" <${process.env.MAIL_USER}>`,
             to: email,
             subject:
                 subject ||
