@@ -33,6 +33,12 @@ const userSchema = new mongoose.Schema({
   VerifyToken: String,
   VerifyTokenExpiry: Date,
 
+    // Fields used while a user is changing their email (not applied until confirmed)
+  pendingEmail: { type: String, lowercase: true, trim: true },
+  pendingEmailToken: String,
+  pendingEmailTokenExpiry: Date,
+  
+
   // ---- Subscription fields (added for property posting paywall) ----
   subscription: {
     plan: {

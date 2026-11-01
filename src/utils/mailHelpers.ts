@@ -6,7 +6,7 @@ const generateOTP = () => {
   return Math.floor(100000 + Math.random() * 900000).toString(); // 6-digit OTP
 };
 
-export const sendEmail = async ({ email, emailType, userId }: any) => {
+export const sendEmail = async ({ email, emailType, userId, token }: any) => {
   try {
     const transporter = nodemailer.createTransport({
       service: "gmail",
@@ -68,6 +68,31 @@ export const sendEmail = async ({ email, emailType, userId }: any) => {
               </a>
             </p>
             <p>This link is valid for 1 hour. It resets your Trade My Property password only. It does not change your email password.</p>
+            <p>If you did not request this, you can ignore this email.</p>
+          </div>
+        `,
+      };
+
+      return await transporter.sendMail(mailOptions);
+    } else if (emailType === "CHANGE_EMAIL") {
+      // "token" is the plain confirmation token. Only its hash is stored in the database.
+      const link = `${process.env.DOMAIN}/api/users/profile/email/confirm?token=${token}`;
+
+      const mailOptions = {
+        from: fromAddress,
+        to: email,
+        subject: "Confirm your new Trade My Property email",
+        text: `Confirm your new email address for Trade My Property using this link: ${link}\n\nThis link is valid for 1 hour. Your email will not change until you open it.\n\nIf you did not request this, you can ignore this email.`,
+        html: `
+          <div style="font-family: Arial, sans-serif; max-width: 480px; margin: 0 auto; color: #222;">
+            <h2>Confirm your new email</h2>
+            <p>We received a request to use this email address for your Trade My Property account.</p>
+            <p>
+              <a href="${link}" style="display: inline-block; padding: 12px 24px; background: #ea580c; color: #ffffff; text-decoration: none; border-radius: 6px; font-weight: bold;">
+                Confirm Email
+              </a>
+            </p>
+            <p>This link is valid for 1 hour. Your email will not change until you open it.</p>
             <p>If you did not request this, you can ignore this email.</p>
           </div>
         `,

@@ -9,7 +9,7 @@ export async function GET(request: NextRequest) {
 
     const userId = await getDataFromToken(request);
 
-    const user = await userModels.findOne({ _id: userId }).select("-password");
+    const user = await userModels.findOne({ _id: userId }).select("-password -forgotPasswordToken -forgotPasswordTokenExpiry -VerifyToken -VerifyTokenExpiry -pendingEmailToken -pendingEmailTokenExpiry");
 
     if (!user) {
       return NextResponse.json(

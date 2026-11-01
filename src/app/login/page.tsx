@@ -117,13 +117,18 @@ export default function LoginPage() {
 
           {/* Button */}
 
-          <button
+                   <button
             type="submit"
             disabled={buttonDisabled}
-            className="w-full text-2xl bg-orange-600 font-bold text-black py-2 rounded-md  transition">
-            {buttonDisabled ? "No Login" : "Login"}
-
+            className={`w-full text-2xl bg-orange-600 font-bold text-black py-2 rounded-md transition ${
+              buttonDisabled
+                ? "opacity-40 blur-[1px] cursor-not-allowed"
+                : "shadow-lg ring-2 ring-orange-300 hover:bg-orange-700"
+            }`}
+          >
+            Login
           </button>
+          
           <Link href="/signup">Visit Signup page </Link>
           <Link href="/forgotpassword">Forgot Password?</Link>
 

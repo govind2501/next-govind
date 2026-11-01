@@ -156,13 +156,19 @@ export default function SignupPage() {
             </label>
           </div>
 
-          <button
+                    <button
             type="submit"
             disabled={buttonDisabled}
-            className="w-full text-2xl bg-orange-600 font-bold text-black py-2 rounded-md  transition"
+            className={`w-full text-2xl bg-orange-600 font-bold text-black py-2 rounded-md transition ${
+              buttonDisabled
+                ? "opacity-40 blur-[1px] cursor-not-allowed"
+                : "shadow-lg ring-2 ring-orange-300 hover:bg-orange-700"
+            }`}
           >
-            {buttonDisabled ? "No Signup" : "Signup"}
+            Signup
           </button>
+
+
           <Link href="/login">Visit login page </Link>
 
         </form>

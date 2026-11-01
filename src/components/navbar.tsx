@@ -82,6 +82,14 @@ export default function Navbar() {
               Dashboard
             </Link>
 
+                 {/* Profile link - only shown when a user is logged in */}
+            {!loading && user && (
+              <Link href="/profile" className='hover:text-orange-300'>
+                Profile
+              </Link>
+            )}
+
+
             {/* Admin links - only show when the logged-in user is an Admin */}
             {!loading && user && user.isAdmin && (
               <>

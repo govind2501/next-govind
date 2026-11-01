@@ -4,8 +4,9 @@ export function proxy(request: NextRequest) {
   const path = request.nextUrl.pathname;
 
   // Only these pages actually require the user to be logged in
-  const isProtectedPath =
+    const isProtectedPath =
     path === "/dashboard" ||
+    path === "/profile" ||
     path === "/property/add" ||
     path.startsWith("/admin");
 
@@ -31,6 +32,7 @@ export const config = {
     "/login",
     "/signup",
     "/dashboard",
+    "/profile",
     "/property",
     "/property/add",
     "/about",

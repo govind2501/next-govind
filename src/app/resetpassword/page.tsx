@@ -4,6 +4,7 @@ import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import { toast } from 'react-hot-toast';
 import { useRouter } from 'next/navigation';
+import PasswordInput from "@/components/PasswordInput";
 
 export default function ResetPasswordPage() {
   const router = useRouter();
@@ -42,13 +43,14 @@ export default function ResetPasswordPage() {
         <hr />
 
         <label className='block mb-1 self-start' htmlFor="newPassword">Naya Password</label>
-        <input
+
+          <PasswordInput
           className='w-full p-2 border border-gray-500 rounded-md mb-4 focus:outline-none focus:ring-2 focus:ring-blue-700 focus:border-gray-900 text-black'
           id="newPassword"
           value={newPassword}
           onChange={(e) => setNewPassword(e.target.value)}
-          placeholder='Naya password daalein'
-          type="password"
+          placeholder='Enter new password'
+          autoComplete="new-password"
         />
 
         <button
