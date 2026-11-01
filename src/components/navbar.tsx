@@ -18,6 +18,7 @@ export default function Navbar() {
   const router = useRouter();
   const queryClient = useQueryClient();
   const [searchQuery, setSearchQuery] = useState('');
+  const [menuOpen, setMenuOpen] = useState(false);
 
   // React Query handles loading, caching, and error state automatically.
   // "user" key means: if any other component asks for this same data,
@@ -28,6 +29,12 @@ export default function Navbar() {
     retry: false, // don't retry if not logged in (401) - that's an expected case, not a network error
   });
 
+  const isLoggedIn = !loading && !!user;
+  const isAdmin = isLoggedIn && !!user.isAdmin;
+  const isLoggedOut = !loading && !user;
+
+  const closeMenu = () => setMenuOpen(false);
+
   const handleLogout = async () => {
     try {
       await axios.get("/api/users/logout");
@@ -35,6 +42,7 @@ export default function Navbar() {
       // Tell React Query the "user" data is now stale/gone, so every
       // component using it (Navbar, Dashboard, etc.) refreshes immediately
       queryClient.setQueryData(["user"], null);
+      closeMenu();
       router.push("/login");
     } catch (error: any) {
       toast.error("Error while logging out");
@@ -43,6 +51,7 @@ export default function Navbar() {
 
   const handleSearch = (e: React.FormEvent) => {
     e.preventDefault();
+    closeMenu();
     if (searchQuery.trim()) {
       router.push(`/property?search=${encodeURIComponent(searchQuery.trim())}`);
     } else {
@@ -50,84 +59,126 @@ export default function Navbar() {
     }
   };
 
+  const signupClass =
+    'bg-orange-600 px-2 py-1 rounded-md font-bold text-black hover:bg-orange-700 shrink-0';
+
+  // The same links are used in the desktop row and in the mobile menu
+  const renderLinks = (linkClass: string, adminClass: string) => (
+    <>
+      <Link href="/property" className={linkClass} onClick={closeMenu}>
+        Browse Properties
+      </Link>
+      <Link href="/about" className={linkClass} onClick={closeMenu}>
+        About
+      </Link>
+      <Link href="/contact" className={linkClass} onClick={closeMenu}>
+        Contact
+      </Link>
+      <Link href="/property/add" className={linkClass} onClick={closeMenu}>
+        Add Property
+      </Link>
+      <Link href="/dashboard" className={linkClass} onClick={closeMenu}>
+        Dashboard
+      </Link>
+
+      {/* Profile link - only shown when a user is logged in */}
+      {isLoggedIn && (
+        <Link href="/profile" className={linkClass} onClick={closeMenu}>
+          Profile
+        </Link>
+      )}
+
+      {/* Admin links - only show when the logged-in user is an Admin */}
+      {isAdmin && (
+        <>
+          <Link href="/admin/properties" className={adminClass} onClick={closeMenu}>
+            Admin
+          </Link>
+          <Link href="/admin/subscriptions" className={adminClass} onClick={closeMenu}>
+            Subscriptions
+          </Link>
+          <Link href="/admin/analytics" className={adminClass} onClick={closeMenu}>
+            Analytics
+          </Link>
+        </>
+      )}
+
+      {/* Login and Signup - only shown when nobody is logged in */}
+      {isLoggedOut && (
+        <>
+          <Link href="/login" className={linkClass} onClick={closeMenu}>
+            Login
+          </Link>
+          <Link href="/signup" className={signupClass} onClick={closeMenu}>
+            Signup
+          </Link>
+        </>
+      )}
+    </>
+  );
+
   return (
     <nav className='fixed top-0 left-0 w-full z-50 bg-orange-900 text-white shadow-md'>
       <div className='max-w-6xl mx-auto px-3 py-2 flex flex-col gap-2'>
 
-        {/* Row 1: Logo on the left, Menu links in the middle, Logout in the far corner */}
+        {/* Row 1: Logo on the left, menu links in the middle (large screens), Logout and menu button on the right */}
         <div className='flex items-center justify-between gap-3'>
-          <Link href="/" className='text-base sm:text-lg font-bold shrink-0'>
+          <Link href="/" className='text-base sm:text-lg font-bold shrink-0' onClick={closeMenu}>
             🏠 Trade My Property
           </Link>
 
-          <div className='flex items-center gap-3 text-xs sm:text-sm overflow-x-auto whitespace-nowrap scrollbar-hide flex-1 justify-end'>
-
-            <Link href="/property" className='hover:text-orange-300'>
-              Browse Properties
-            </Link>
-
-            <Link href="/about" className='hover:text-orange-300'>
-              About
-            </Link>
-
-            <Link href="/contact" className='hover:text-orange-300'>
-              Contact
-            </Link>
-
-            <Link href="/property/add" className='hover:text-orange-300'>
-              Add Property
-            </Link>
-
-            <Link href="/dashboard" className='hover:text-orange-300'>
-              Dashboard
-            </Link>
-
-                 {/* Profile link - only shown when a user is logged in */}
-            {!loading && user && (
-              <Link href="/profile" className='hover:text-orange-300'>
-                Profile
-              </Link>
+          {/* Desktop links: hidden on small screens */}
+          <div className='hidden lg:flex items-center gap-3 text-sm overflow-x-auto whitespace-nowrap scrollbar-hide flex-1 justify-end'>
+            {renderLinks(
+              'hover:text-orange-300',
+              'hover:text-orange-300 font-semibold text-yellow-300'
             )}
-
-
-            {/* Admin links - only show when the logged-in user is an Admin */}
-            {!loading && user && user.isAdmin && (
-              <>
-                <Link href="/admin/properties" className='hover:text-orange-300 font-semibold text-yellow-300'>
-                  Admin
-                </Link>
-                <Link href="/admin/subscriptions" className='hover:text-orange-300 font-semibold text-yellow-300'>
-                  Subscriptions
-                </Link>
-                <Link href="/admin/analytics" className='hover:text-orange-300 font-semibold text-yellow-300'>
-                  Analytics
-                </Link>
-              </>
-            )}
-
-            {/* Login and Signup - always visible */}
-            <Link href="/login" className='hover:text-orange-300'>
-              Login
-            </Link>
-            <Link
-              href="/signup"
-              className='bg-orange-600 px-2 py-1 rounded-md font-bold text-black hover:bg-orange-700 shrink-0'
-            >
-              Signup
-            </Link>
-
           </div>
 
-          {/* Logout button - only shown when a user is actually logged in */}
-          {!loading && user && (
+          <div className='flex items-center gap-2 ml-auto lg:ml-0'>
+            {/* Logout button - only shown when a user is actually logged in */}
+            {isLoggedIn && (
+              <button
+                onClick={handleLogout}
+                className='bg-orange-600 px-2 py-1 rounded-md font-bold text-black hover:bg-orange-700 shrink-0'
+              >
+                Logout
+              </button>
+            )}
+
+            {/* Menu button: only on small screens */}
             <button
-              onClick={handleLogout}
-              className='bg-orange-600 px-2 py-1 rounded-md font-bold text-black hover:bg-orange-700 shrink-0'
+              type="button"
+              onClick={() => setMenuOpen((previous) => !previous)}
+              aria-label={menuOpen ? 'Close menu' : 'Open menu'}
+              aria-expanded={menuOpen}
+              className='lg:hidden shrink-0 p-1 rounded-md hover:bg-orange-800'
             >
-              Logout
+              {menuOpen ? (
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" className="w-7 h-7">
+                  <line x1="5" y1="5" x2="19" y2="19" />
+                  <line x1="19" y1="5" x2="5" y2="19" />
+                </svg>
+              ) : (
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" className="w-7 h-7">
+                  <line x1="4" y1="6" x2="20" y2="6" />
+                  <line x1="4" y1="12" x2="20" y2="12" />
+                  <line x1="4" y1="18" x2="20" y2="18" />
+                </svg>
+              )}
             </button>
-          )}
+          </div>
         </div>
+
+        {/* Mobile menu: all links, one below the other */}
+        {menuOpen && (
+          <div className='lg:hidden flex flex-col items-start gap-1 border-t border-orange-700 pt-2 pb-1 text-base'>
+            {renderLinks(
+              'w-full py-2 hover:text-orange-300',
+              'w-full py-2 hover:text-orange-300 font-semibold text-yellow-300'
+            )}
+          </div>
+        )}
 
         {/* Row 2: Search bar on the left, WhatsApp share + Dark mode toggle pinned to the far right */}
         <div className='flex items-center gap-2'>
