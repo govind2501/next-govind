@@ -22,7 +22,7 @@ export default function ResetPasswordPage() {
     try {
       setLoading(true);
       await axios.post('/api/users/resetpassword', { token, newPassword });
-      toast.success("Password reset ho gaya, ab login karein");
+      toast.success("Password reset successfully. Please log in.");
       router.push('/login');
     } catch (error: any) {
       toast.error(error.response?.data?.error || "Something went wrong");
@@ -42,7 +42,7 @@ export default function ResetPasswordPage() {
         </h1>
         <hr />
 
-        <label className='block mb-1 self-start' htmlFor="newPassword">Naya Password</label>
+        <label className='block mb-1 self-start' htmlFor="newPassword">New Password</label>
 
           <PasswordInput
           className='w-full p-2 border border-gray-500 rounded-md mb-4 focus:outline-none focus:ring-2 focus:ring-blue-700 focus:border-gray-900 text-black'
@@ -55,7 +55,7 @@ export default function ResetPasswordPage() {
 
         <button
           type="submit"
-          disabled={newPassword.length < 6 || !token || loading}
+          disabled={newPassword.length < 8 || !token || loading}
           className='w-full text-xl bg-orange-600 font-bold text-black py-2 rounded-md transition'
         >
           Reset Password

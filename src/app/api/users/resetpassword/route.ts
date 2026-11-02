@@ -10,9 +10,21 @@ export async function POST(request: NextRequest) {
     const reqBody = await request.json();
     const { token, newPassword } = reqBody;
 
-    if (!token || !newPassword) {
+       if (!token || !newPassword) {
       return NextResponse.json(
         { error: "Token and new password are required" },
+        { status: 400 }
+      );
+    }
+
+    // The password must be a string of 8 to 72 characters (72 is the bcrypt limit)
+    if (
+      typeof newPassword !== "string" ||
+      newPassword.length < 8 ||
+      newPassword.length > 72
+    ) {
+      return NextResponse.json(
+        { error: "Password must be between 8 and 72 characters" },
         { status: 400 }
       );
     }
@@ -41,8 +53,12 @@ export async function POST(request: NextRequest) {
       message: "Password reset successful",
       success: true,
     });
-  } catch (error: any) {
+    } catch (error: any) {
+    // Log the real reason on the server only, and send a generic message to the browser
     console.log("Reset password route error:", error.message);
-    return NextResponse.json({ error: error.message }, { status: 500 });
+    return NextResponse.json(
+      { error: "Something went wrong. Please try again." },
+      { status: 500 }
+    );
   }
 }
