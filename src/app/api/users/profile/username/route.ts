@@ -8,7 +8,7 @@ export async function PATCH(request: NextRequest) {
   // Step 1: identify the logged-in user from the token cookie
   let userId: string;
   try {
-    userId = getDataFromToken(request);
+    userId = await getDataFromToken(request);
   } catch {
     return NextResponse.json(
       { error: "Please log in again" },

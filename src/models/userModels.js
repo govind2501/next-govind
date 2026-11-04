@@ -37,6 +37,9 @@ const userSchema = new mongoose.Schema({
   pendingEmail: { type: String, lowercase: true, trim: true },
   pendingEmailToken: String,
   pendingEmailTokenExpiry: Date,
+
+    // Time of the last password change; login tokens issued before this are rejected
+  passwordChangedAt: Date,
   
 
   // ---- Subscription fields (added for property posting paywall) ----

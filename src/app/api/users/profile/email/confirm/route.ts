@@ -69,7 +69,7 @@ export async function GET(request: NextRequest) {
     // If this browser is logged in as the same user, refresh the token cookie
     // because the old token still contains the old email
     try {
-      const loggedInId = getDataFromToken(request);
+      const loggedInId = await getDataFromToken(request);
       if (String(loggedInId) === String(user._id)) {
         const newToken = jwt.sign(
           { id: user._id, username: user.username, email: newEmail },

@@ -45,6 +45,8 @@ export async function POST(request: NextRequest) {
     const hashedPassword = await bcryptjs.hash(newPassword, salt);
 
     user.password = hashedPassword;
+    // Every login token issued before this moment becomes invalid
+    user.passwordChangedAt = new Date();
     user.forgotPasswordToken = undefined;
     user.forgotPasswordTokenExpiry = undefined;
     await user.save();
