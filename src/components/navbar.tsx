@@ -100,6 +100,10 @@ export default function Navbar() {
           <Link href="/admin/analytics" className={adminClass} onClick={closeMenu}>
             Analytics
           </Link>
+
+           <Link href="/admin/users" className={adminClass} onClick={closeMenu}>
+            Users
+          </Link>
         </>
       )}
 
