@@ -7,6 +7,20 @@ const razorpay = new Razorpay({
 });
 
 export async function POST(request: Request) {
+  // Safety: never accept payments made with Razorpay TEST keys on the live website.
+  // Test card numbers are public, so anyone could "pay" and get a free subscription.
+  // This block switches itself off automatically once live keys are used.
+  const keyId = process.env.RAZORPAY_KEY_ID || "";
+  if (process.env.NODE_ENV === "production" && keyId.startsWith("rzp_test_")) {
+    return NextResponse.json(
+      {
+        error:
+          "Online payment is not available yet. Please contact us to subscribe.",
+      },
+      { status: 503 }
+    );
+  }
+
   try {
     const { amount } = await request.json();
 
