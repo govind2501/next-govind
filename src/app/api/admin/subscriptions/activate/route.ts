@@ -13,9 +13,19 @@ const PLAN_CONFIG = {
 };
 
 export async function POST(request: NextRequest) {
+  // Step 1: find out who is calling (not logged in -> 401)
+  let requesterId: string;
   try {
-    // Only an Admin can perform this action
-    const requesterId = await getDataFromToken(request);
+    requesterId = await getDataFromToken(request);
+  } catch {
+    return NextResponse.json(
+      { error: "Please log in again" },
+      { status: 401 }
+    );
+  }
+
+  try {
+    // Step 2: only an Admin can perform this action
     const requester = await User.findById(requesterId);
 
     if (!requester || !requester.isAdmin) {
@@ -53,6 +63,24 @@ export async function POST(request: NextRequest) {
       );
     }
 
+    // Do not create a second active subscription for the same user and district
+    const existingActive = await Subscription.findOne({
+      user: userId,
+      state,
+      district,
+      status: "Active",
+      endDate: { $gt: new Date() },
+    });
+
+    if (existingActive) {
+      return NextResponse.json(
+        {
+          error: `${targetUser.username} already has an active subscription in ${district} district`,
+        },
+        { status: 409 }
+      );
+    }
+
     const startDate = new Date();
     const endDate = new Date();
     endDate.setMonth(endDate.getMonth() + config.months);
@@ -78,12 +106,12 @@ export async function POST(request: NextRequest) {
       message: `${planType} subscription activated for ${targetUser.username} in ${district} district`,
       subscription: newSubscription,
     });
-
   } catch (error: any) {
+    // Log the real reason on the server only, and send a generic message to the browser
     console.log("Admin subscription activate error:", error.message);
     return NextResponse.json(
-      { error: error.message },
+      { error: "Something went wrong. Please try again." },
       { status: 500 }
     );
   }
-}    
+}
