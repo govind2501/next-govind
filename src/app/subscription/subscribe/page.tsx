@@ -24,12 +24,16 @@ declare global {
   }
 }
 
+// Which payment gateway is active: set NEXT_PUBLIC_PAYMENT_GATEWAY to "payu" or "razorpay"
+const GATEWAY = process.env.NEXT_PUBLIC_PAYMENT_GATEWAY === "payu" ? "payu" : "razorpay";
+
 function SubscribeForm() {
   const router = useRouter();
   const searchParams = useSearchParams();
 
   const initialState = searchParams.get("state") || "";
   const initialDistrict = searchParams.get("district") || "";
+  const paymentResult = searchParams.get("payment");
 
   const [step, setStep] = useState<"select" | "checkout">("select");
   const [state, setState] = useState(initialState);
@@ -48,6 +52,17 @@ function SubscribeForm() {
     }
   }, [state]);
 
+  // Show the result when PayU sends the customer back to this page
+  useEffect(() => {
+    if (paymentResult === "success") {
+      toast.success("Payment successful! Your subscription is now active.", { id: "payment-result" });
+      router.replace("/property");
+    } else if (paymentResult === "failed") {
+      toast.error("Payment failed. If money was deducted, please contact support.", { id: "payment-result" });
+      router.replace("/subscription/subscribe");
+    }
+  }, [paymentResult, router]);
+
   const handleAddToCart = () => {
     if (!state || !district) {
       toast.error("Please select both State and District");
@@ -59,6 +74,25 @@ function SubscribeForm() {
   const handlePayment = async () => {
     try {
       setLoading(true);
+
+      // PayU: ask our server for the signed form data, then send the customer to PayU
+      if (GATEWAY === "payu") {
+        const payuResponse = await axios.post("/api/payment/payu/start", { state, district, planType });
+        const { action, fields } = payuResponse.data;
+        const payuForm = document.createElement("form");
+        payuForm.method = "POST";
+        payuForm.action = action;
+        Object.entries(fields).forEach(([name, value]) => {
+          const input = document.createElement("input");
+          input.type = "hidden";
+          input.name = name;
+          input.value = String(value);
+          payuForm.appendChild(input);
+        });
+        document.body.appendChild(payuForm);
+        payuForm.submit();
+        return;
+      }
 
       const orderResponse = await axios.post("/api/payment/create-order", {
         amount: price,

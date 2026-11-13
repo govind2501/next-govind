@@ -4,15 +4,10 @@ import { getDataFromToken } from "@/helpers/getDataFromToken";
 import { NextRequest, NextResponse } from "next/server";
 import crypto from "crypto";
 import Razorpay from "razorpay";
+import { PLAN_CONFIG } from "@/lib/plans";
 
 connect();
 
-// Fixed prices - the server decides the price, never the browser
-const PLAN_CONFIG = {
-  Monthly: { amount: 299, months: 1, propertyLimit: 20 },
-  Quarterly: { amount: 599, months: 3, propertyLimit: 80 },
-  Yearly: { amount: 2200, months: 12, propertyLimit: 260 },
-};
 
 export async function POST(request: NextRequest) {
   // Step 1: find out who is buying the subscription (not logged in -> 401)
