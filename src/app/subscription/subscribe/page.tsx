@@ -4,6 +4,7 @@ import React, { useEffect, useState, Suspense } from 'react';
 import axios from 'axios';
 import { useSearchParams, useRouter } from 'next/navigation';
 import { toast } from 'react-hot-toast';
+import Link from 'next/link';
 import statesDistricts from '@/data/statesDistricts.json';
 
 const PLAN_PRICES = {
@@ -262,6 +263,11 @@ function SubscribeForm() {
               ← Edit selection
             </button>
 
+            <p className="text-xs text-gray-600 dark:text-gray-300 text-center mb-3">
+              Subscription payments are non-refundable. Please read our{" "}
+              <Link href="/refund-policy" target="_blank" className="underline text-orange-800 dark:text-orange-300">Refund Policy</Link>.
+            </p>
+
             <button
               onClick={handlePayment}
               disabled={loading}
@@ -271,7 +277,7 @@ function SubscribeForm() {
             </button>
 
             <p className='text-xs text-gray-500 dark:text-gray-400 text-center mt-3'>
-              🔒 Secured by Razorpay
+              🔒 Secured by {GATEWAY === "payu" ? "PayU" : "Razorpay"}
             </p>
           </>
         )}

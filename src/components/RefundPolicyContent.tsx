@@ -1,3 +1,5 @@
+import { CONTACT_EMAIL, CONTACT_PHONE } from "@/lib/contactInfo";
+
 export default function RefundPolicyContent({ language }: { language: "en" | "hi" }) {
   if (language === "en") {
     return (
@@ -34,7 +36,7 @@ export default function RefundPolicyContent({ language }: { language: "en" | "hi
           due to a technical error, please contact us through our Contact Us page with your
           payment details. We will investigate and resolve genuine technical failures, which
           may result in the subscription being activated or the amount being reversed as
-          applicable.
+          applicable. We aim to respond to and resolve such payment issues within 3-5 working days of receiving your payment details.
         </p>
 
         <h2 className='text-lg font-bold text-orange-900 mt-2'>4. Cancellation</h2>
@@ -47,11 +49,11 @@ export default function RefundPolicyContent({ language }: { language: "en" | "hi
         <h2 className='text-lg font-bold text-orange-900 mt-2'>5. Contact Us</h2>
         <p>
           For any payment-related queries or concerns, please reach out through our{" "}
-          Contact Us page, and we will respond as soon as possible.
+          Contact Us page, or email us at {CONTACT_EMAIL} or call {CONTACT_PHONE}. We aim to respond within 3-5 working days.
         </p>
 
         <p className='mt-4 text-sm text-gray-500'>
-          Last updated: August 2026
+          Last updated: November 2026
         </p>
       </div>
     );
@@ -89,7 +91,7 @@ export default function RefundPolicyContent({ language }: { language: "en" | "hi
         अगर आपके account से पैसे कट गए हों पर technical error की वजह से subscription activate
         नहीं हुई, तो कृपया अपने payment details के साथ हमारे Contact Us page से संपर्क करें।
         हम genuine technical समस्याओं की जांच करके subscription activate करेंगे या राशि वापस
-        करेंगे, जैसा उचित हो।
+        करेंगे, जैसा उचित हो। हम आपके payment details मिलने के 3-5 कार्य दिवसों के भीतर ऐसी payment समस्याओं पर जवाब देने और उन्हें सुलझाने का प्रयास करते हैं।
       </p>
 
       <h2 className='text-lg font-bold text-orange-900 mt-2'>4. Cancellation</h2>
@@ -102,11 +104,11 @@ export default function RefundPolicyContent({ language }: { language: "en" | "hi
       <h2 className='text-lg font-bold text-orange-900 mt-2'>5. संपर्क करें</h2>
       <p>
         किसी भी payment से जुड़े सवाल या समस्या के लिए, कृपया हमारे Contact Us page से संपर्क
-        करें, हम जल्द से जल्द जवाब देंगे।
+        करें, या {CONTACT_EMAIL} पर ईमेल करें, या {CONTACT_PHONE} पर कॉल करें। हम 3-5 कार्य दिवसों के भीतर जवाब देने का प्रयास करते हैं।
       </p>
 
       <p className='mt-4 text-sm text-gray-500'>
-        आखिरी बार अपडेट: अगस्त 2026
+        आखिरी बार अपडेट: नवंबर 2026
       </p>
     </div>
   );

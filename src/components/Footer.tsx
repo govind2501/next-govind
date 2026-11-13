@@ -1,4 +1,5 @@
 import Link from 'next/link';
+import { CONTACT_EMAIL, CONTACT_PHONE, CONTACT_PHONE_LINK } from "@/lib/contactInfo";
 
 export default function Footer() {
   return (
@@ -15,12 +16,13 @@ export default function Footer() {
             <Link href="/terms" className='hover:text-white'>Terms & Conditions</Link>
             <Link href="/privacy" className='hover:text-white'>Privacy Policy</Link>
             <Link href="/refund-policy" className='hover:text-white'>Refund Policy</Link>
+            <Link href="/pricing" className='hover:text-white'>Pricing</Link>
           </div>
         </div>
 
         {/* Legal business entity info - required for payment gateway compliance */}
         <p className='text-xs text-orange-200 text-center sm:text-left border-t border-orange-800 pt-2'>
-          Trade My Property is operated by SHUBHAM SHIKHAR JEWELLERS, 0, Jhugiya Bazar, Sadar, Gorakhpur, Uttar Pradesh, 273013
+          Trade My Property is operated by SHUBHAM SHIKHAR JEWELLERS, 0, Jhugiya Bazar, Sadar, Gorakhpur, Uttar Pradesh, 273013 | Email: <a href={"mailto:" + CONTACT_EMAIL} className="hover:text-white">{CONTACT_EMAIL}</a> | Phone: <a href={"tel:" + CONTACT_PHONE_LINK} className="hover:text-white">{CONTACT_PHONE}</a>
         </p>
 
       </div>
