@@ -1,5 +1,6 @@
 'use client'
 
+import { getPriceSuffix } from "@/lib/priceUnits";
 import React, { useEffect, useState } from 'react';
 import Link from 'next/link';
 import { useRouter, usePathname } from 'next/navigation';
@@ -203,8 +204,7 @@ export default function BrowsePropertiesClient({
                   <div className='flex flex-col xs:flex-row justify-between xs:items-center gap-1 mt-2'>
                     <span className='text-lg sm:text-xl font-bold text-green-700 dark:text-green-400'>
                       ₹{Number(prop.price).toLocaleString('en-IN')}
-                      {prop.priceUnit === "PerMonth" && " /month"}
-                      {prop.priceUnit === "PerSqft" && " /sqft"}
+                      {getPriceSuffix(prop.priceUnit)}
                       {isBuyer && (
                         <span className='block text-xs font-normal text-gray-500 dark:text-gray-400'>Budget</span>
                       )}

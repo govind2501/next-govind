@@ -1,4 +1,5 @@
 'use client'
+import { PRICE_UNITS } from "@/lib/priceUnits";
 import React, { useState } from 'react';
 import axios from 'axios';
 import { toast } from 'react-hot-toast';
@@ -152,9 +153,7 @@ export default function EditPropertyClient({ property }: { property: any }) {
                 value={priceUnit}
                 onChange={(e) => setPriceUnit(e.target.value)}
               >
-                <option value="Total">Total</option>
-                <option value="PerMonth">Per Month</option>
-                <option value="PerSqft">Per Sqft</option>
+            {PRICE_UNITS.map((unit) => (<option key={unit.value} value={unit.value}>{unit.label}</option>))}
               </select>
             </div>
           </div>

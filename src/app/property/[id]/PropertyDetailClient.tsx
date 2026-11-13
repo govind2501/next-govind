@@ -1,5 +1,6 @@
 'use client'
 
+import { getPriceSuffix } from "@/lib/priceUnits";
 import React, { useState } from 'react';
 import { useRouter } from 'next/navigation';
 
@@ -19,7 +20,7 @@ export default function PropertyDetailClient({
 
   const handleWhatsAppShare = () => {
     const priceText = `₹${Number(property.price).toLocaleString('en-IN')}${
-      property.priceUnit === "PerMonth" ? " /month" : property.priceUnit === "PerSqft" ? " /sqft" : ""
+      getPriceSuffix(property.priceUnit)
     }`;
     const pageUrl = typeof window !== "undefined" ? window.location.href : "";
     const message = `Check out this property on Trade My Property:\n\n${property.title || property.propertyType}\n${priceText}\n${property.district}, ${property.state}\n\n${pageUrl}`;
@@ -80,8 +81,7 @@ export default function PropertyDetailClient({
             <h1 className='text-xl sm:text-2xl font-bold text-orange-900 dark:text-orange-300'>{property.title}</h1>
             <span className='text-xl sm:text-2xl font-bold text-green-700 dark:text-green-400'>
               ₹{Number(property.price).toLocaleString('en-IN')}
-              {property.priceUnit === "PerMonth" && " /month"}
-              {property.priceUnit === "PerSqft" && " /sqft"}
+              {getPriceSuffix(property.priceUnit)}
             </span>
           </div>
 

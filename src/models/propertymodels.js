@@ -1,4 +1,5 @@
 import mongoose from "mongoose";
+import { PRICE_UNIT_VALUES } from "@/lib/priceUnits";
 
 const propertySchema = new mongoose.Schema({
   // Basic Info
@@ -41,7 +42,7 @@ const propertySchema = new mongoose.Schema({
   },
   priceUnit: {
     type: String,
-    enum: ["Total", "PerMonth", "PerSqft"],
+    enum: PRICE_UNIT_VALUES,
     default: "Total",
   },
 

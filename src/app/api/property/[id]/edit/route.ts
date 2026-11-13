@@ -1,3 +1,4 @@
+import { PRICE_UNIT_VALUES } from "@/lib/priceUnits";
 import { connect } from "@/dbConfig/dbConfig";
 import Property from "@/models/propertymodels";
 import { getDataFromToken } from "@/helpers/getDataFromToken";
@@ -31,6 +32,14 @@ export async function PATCH(
     if (!contactPhone || !price) {
       return NextResponse.json(
         { error: "Phone and price are required" },
+        { status: 400 }
+      );
+    }
+
+    // Reject price units that are not in the shared list
+    if (priceUnit && !PRICE_UNIT_VALUES.includes(priceUnit)) {
+      return NextResponse.json(
+        { error: "Invalid price unit" },
         { status: 400 }
       );
     }

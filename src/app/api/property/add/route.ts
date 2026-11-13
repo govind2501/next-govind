@@ -1,3 +1,4 @@
+import { PRICE_UNIT_VALUES } from "@/lib/priceUnits";
 import { connect } from "@/dbConfig/dbConfig";
 import Property from "@/models/propertymodels";
 import User from "@/models/userModels";
@@ -49,6 +50,14 @@ export async function POST(request: NextRequest) {
     if (!propertyType || !transactionType || !price || !state || !district || !ownerName || !contactPhone) {
       return NextResponse.json(
         { error: "Please fill all required fields" },
+        { status: 400 }
+      );
+    }
+
+    // Reject price units that are not in the shared list
+    if (priceUnit && !PRICE_UNIT_VALUES.includes(priceUnit)) {
+      return NextResponse.json(
+        { error: "Invalid price unit" },
         { status: 400 }
       );
     }
